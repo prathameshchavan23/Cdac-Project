@@ -1,56 +1,159 @@
-import React from 'react';
-import FormHeader from './FormHeader';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { loginStart, loginFailure, loginSuccess } from "../redux/authSlice.js";
+import fakeAuthApi from "../api/auth.js";
 
-const LoginPage = ({ role, onBack }) => {
-    return (
-        <div className="w-full max-w-md mx-auto p-8">
-            <FormHeader />
-            <div className="mt-8">
-                <h1 className="text-3xl font-bold text-center text-gray-800">Welcome Back</h1>
-                <p className="text-center text-gray-500 mt-2 mb-8">
-                    Please sign in as a <span className="font-semibold capitalize">{role}</span>.
-                </p>
-                <form className="space-y-5">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                        <input 
-                            type="email" 
-                            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="example@email.com" 
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Password</label>
-                        <input 
-                            type="password" 
-                            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="at least 8 characters" 
-                        />
-                    </div>
-                    <div className="text-right">
-                        <a href="#" className="text-sm text-blue-600 hover:underline">Forgot Password?</a>
-                    </div>
-                    <div>
-                        <button 
-                            type="submit" 
-                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-800 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
-                        >
-                            Sign In
-                        </button>
-                    </div>
-                </form>
-                <div className="text-center mt-6">
-                    <p className="text-sm text-gray-600">
-                        Don't have an account? <a href="#" className="font-medium text-blue-600 hover:underline">Sign up</a>
-                    </p>
-                    <button onClick={onBack} className="mt-4 text-sm text-gray-500 hover:underline">
-                        &larr; Back to role selection
-                    </button>
-                </div>
-            </div>
+const LoginPage = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const { loading, error } = useSelector((state) => state.auth);
+
+  // Get role from URL, default to 'student'
+  const params = new URLSearchParams(location.search);
+  const role = params.get("role") || "student";
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    dispatch(loginStart());
+    
+    try {
+      const userData = await fakeAuthApi(email, password);
+
+      // Validate that the user's actual role matches the login form's role
+      if (userData.role !== role) {
+        dispatch(
+          loginFailure(
+            `Credentials are valid, but you are not a ${role}. Please use the correct portal.`
+          )
+        );
+        return;
+      }
+
+      dispatch(loginSuccess(userData));
+      
+      // Navigate based on role
+      if (userData.role === 'student') {
+        navigate('/student/dashboard');
+      } else if (userData.role === 'staff') {
+        navigate('/staff/dashboard');
+      } else {
+        navigate('/dashboard'); // fallback
+      }
+    } catch (err) {
+      dispatch(loginFailure(err));
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+          Login as {role.charAt(0).toUpperCase() + role.slice(1)}
+        </h2>
+        
+        {/* Demo credentials info */}
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-700 font-medium">Demo Credentials:</p>
+          <p className="text-xs text-blue-600">
+            {role === 'student' 
+              ? 'Student: user@example.com / password' 
+              : 'Staff: admin@example.com / password'
+            }
+          </p>
         </div>
-    );
+
+        <form className="space-y-6" onSubmit={handleLogin}>
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="you@example.com"
+            />
+          </div>
+          
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="Your Password"
+            />
+          </div>
+
+          {/* Display errors */}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600 text-center">{error}</p>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+        
+        <div className="text-sm text-center text-gray-600">
+          <p>
+            {role === "student" ? (
+              <Link
+                to="/login?role=staff"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Login as Staff instead
+              </Link>
+            ) : (
+              <Link
+                to="/login?role=student"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Login as Student instead
+              </Link>
+            )}
+          </p>
+          <p className="mt-2">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-
 export default LoginPage;
+

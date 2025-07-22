@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from '../../components/Icon'; // Make sure to import the Icon component
+import { Calendar } from 'lucide-react';
 
 const Feedback = () => {
     // Mock data
@@ -29,9 +29,27 @@ const Feedback = () => {
                 <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                     <h3 className="font-semibold mb-4">Upcoming Events</h3>
                     <ul className="space-y-3">
-                        <li className="flex items-start"><Icon path="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M12 14.25h.008v.008H12v-.008z" className="w-5 h-5 mr-3 mt-1 text-gray-500"/><div><p className="font-medium">Math 101 Exam</p><p className="text-sm text-gray-500">Oct 21, 2024</p></div></li>
-                        <li className="flex items-start"><Icon path="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M12 14.25h.008v.008H12v-.008z" className="w-5 h-5 mr-3 mt-1 text-gray-500"/><div><p className="font-medium">History 202 Lecture</p><p className="text-sm text-gray-500">Oct 22, 2024</p></div></li>
-                        <li className="flex items-start"><Icon path="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18M12 14.25h.008v.008H12v-.008z" className="w-5 h-5 mr-3 mt-1 text-gray-500"/><div><p className="font-medium">Physics Lab</p><p className="text-sm text-gray-500">Oct 23, 2024</p></div></li>
+                        <li className="flex items-start">
+                            <Calendar className="w-5 h-5 mr-3 mt-1 text-gray-500"/>
+                            <div>
+                                <p className="font-medium">Math 101 Exam</p>
+                                <p className="text-sm text-gray-500">Oct 21, 2024</p>
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <Calendar className="w-5 h-5 mr-3 mt-1 text-gray-500"/>
+                            <div>
+                                <p className="font-medium">History 202 Lecture</p>
+                                <p className="text-sm text-gray-500">Oct 22, 2024</p>
+                            </div>
+                        </li>
+                        <li className="flex items-start">
+                            <Calendar className="w-5 h-5 mr-3 mt-1 text-gray-500"/>
+                            <div>
+                                <p className="font-medium">Physics Lab</p>
+                                <p className="text-sm text-gray-500">Oct 23, 2024</p>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>

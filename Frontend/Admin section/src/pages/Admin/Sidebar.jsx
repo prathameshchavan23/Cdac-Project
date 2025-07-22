@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import Icon from "./Icon";
-import cdac_logo from "../assets/cdac_logo.png";
+import cdac_logo from "../../assets/cdac_logo.png";
 
 const Sidebar = () => {
   const location = useLocation();
