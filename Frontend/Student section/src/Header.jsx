@@ -1,45 +1,40 @@
+import { Link } from "react-router";
+import Icon from "./Icon";
+const Header = () => {
+    const navLinks = [
+        { name: 'Dashboard', path: '/dashboard' },
+        { name: 'Courses', path: '/courses' },
+        { name: 'Timetable', path: '/timetable' },
+        { name: 'Marks', path: '/marks' },
+        { name: 'Feedback', path: '/feedback' },
+        { name: 'Settings', path: '/settings' },
+    ];
 
-
-const Header = ({ title, studentName, onMenuClick }) => (
-  <header className="bg-white sticky top-0 border-b border-gray-200 px-6 z-30  flex items-center h-[5.05rem]">
-    <div className="flex items-center justify-between w-full">
-      <div className="flex items-center">
-        {/* Hamburger Icon for mobile view, triggers onMenuClick */}
-        <button
-          onClick={onMenuClick}
-          className="lg:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 mr-4"
-          aria-label="Open sidebar"
-        >
-          <span className="material-icons-outlined">menu</span>
-        </button>
-        <h1 className="text-xl font-semibold text-gray-800">
-          {title}
-        </h1>
-      </div>
-      <div className="flex items-center space-x-4">
-        {/* Notification Icon */}
-        <button className="p-2 text-gray-500 hover:text-gray-700 relative">
-          <span className="material-icons-outlined">notifications</span>
-        </button>
-        {/* User Profile Info */}
-        <div className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-gray-100">
-          <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=36&h=36&fit=crop&crop=face"
-              alt="User Avatar"
-              className="w-full h-full object-cover"
-              onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/36x36/E2E8F0/4A5568?text=U'; }}
-            />
-          </div>
-          <div className="hidden sm:block">
-            <div className="text-sm font-medium text-gray-800">
-              {studentName}
+    return (
+        <header className="bg-white shadow-sm">
+            <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 className="text-xl font-semibold text-gray-800">CDAC ACTS</h1>
+                <nav className="hidden md:flex items-center space-x-6">
+                    {navLinks.map(link => (
+                        <Link
+                            key={link.name}
+                            to={link.path}
+                            className={location.pathname === link.path ? 'text-blue-600 font-semibold' : 'text-gray-600 hover:text-blue-600'}
+                        >
+                            {link.name}
+                        </Link>
+                    ))}
+                    <button className="text-gray-600 hover:text-blue-600">
+                        <Icon name="notifications" />
+                    </button>
+                    <img alt="User avatar" className="h-10 w-10 rounded-full" src="https://placehold.co/40x40/E2E8F0/4A5568?text=U" />
+                </nav>
+                 <button className="md:hidden text-gray-600">
+                    <Icon name="menu" />
+                </button>
             </div>
-            <div className="text-xs text-gray-500">Student</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-);
+        </header>
+    );
+};
+
 export default Header;
