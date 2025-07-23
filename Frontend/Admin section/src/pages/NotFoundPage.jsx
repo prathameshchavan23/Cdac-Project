@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 const NotFoundPage = () => (
   <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-gray-800">
     <h1 className="text-5xl font-bold">404</h1>

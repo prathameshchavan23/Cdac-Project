@@ -12,7 +12,7 @@ const LoginPage = () => {
 
   // Get role from URL, default to 'student'
   const params = new URLSearchParams(location.search);
-  const role = params.get("role") || "student";
+  const role = params.get("role") || "student"; // 'student' is the default
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,16 +36,16 @@ const LoginPage = () => {
 
       dispatch(loginSuccess(userData));
       
-      // Navigate based on role
+      // Navigate based on role after successful login
       if (userData.role === 'student') {
-        navigate('/student/dashboard');
+        navigate('/user/dashboard');
       } else if (userData.role === 'staff') {
         navigate('/staff/dashboard');
       } else {
         navigate('/dashboard'); // fallback
       }
     } catch (err) {
-      dispatch(loginFailure(err));
+      dispatch(loginFailure(err.toString()));
     }
   };
 
@@ -124,6 +124,7 @@ const LoginPage = () => {
         
         <div className="text-sm text-center text-gray-600">
           <p>
+            {/* FIX: Changed role check from "user" to "student" */}
             {role === "student" ? (
               <Link
                 to="/login?role=staff"
@@ -132,6 +133,7 @@ const LoginPage = () => {
                 Login as Staff instead
               </Link>
             ) : (
+              // FIX: Changed link from "role=user" to "role=student"
               <Link
                 to="/login?role=student"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
@@ -156,4 +158,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

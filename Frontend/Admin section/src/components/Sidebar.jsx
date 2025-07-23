@@ -7,17 +7,17 @@ import cdac_logo from "../assets/cdac_logo.png";
 // This data defines the links that will appear for each role.
 
 const adminLinks = [
-  { name: "Dashboard", path: "/admin/dashboard", icon: "dashboard" },
-  { name: "Registration", path: "/admin/registration", icon: "app_registration" },
-  { name: "Attendance", path: "/admin/attendance", icon: "checklist_rtl" },
-  { name: "TimeTable", path: "/admin/timetable", icon: "calendar_today" },
+  { name: "Dashboard", path: "/staff/dashboard", icon: "dashboard" },
+  { name: "Marks", path: "/staff/marks", icon: "app_registration" },
+  { name: "Attendance", path: "/staff/attendance", icon: "checklist_rtl" },
+  { name: "TimeTable", path: "/staff/timetable", icon: "calendar_today" },
   {
     name: "Feedback",
     icon: "feedback",
     submenu: [
-      { name: "Form", path: "/admin/feedback" },
-      { name: "Dashboard", path: "/admin/feedback/dashboard" },
-      { name: "Reports", path: "/admin/feedback/reports" },
+      { name: "Form", path: "/staff/feedback" },
+      { name: "Dashboard", path: "/staff/feedback/dashboard" },
+      { name: "Reports", path: "/staff/feedback/reports" },
     ],
   },
 ];
@@ -72,7 +72,7 @@ const Sidebar = ({ role }) => {
     <aside className="w-64 bg-slate-800 text-white min-h-screen flex flex-col shadow-xl">
       {/* Logo and Title Section */}
       <div className="p-6 border-b border-slate-700 flex flex-col items-center">
-        <img src={cdac_logo} alt="CDAC Logo" className="w-24 mb-3" />
+        <img src={cdac_logo} alt="CDAC Logo" className="w-40 h-20 mb-3" />
         <h1 className="text-xl font-bold tracking-wider text-slate-100">CDAC Portal</h1>
       </div>
 

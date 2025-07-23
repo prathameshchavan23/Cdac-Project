@@ -39,7 +39,7 @@ const AppLayout = ({ role }) => {
             <div className="text-lg font-semibold text-slate-700">
               {role === "staff" ? "Staff Portal" : "Student Portal"}
             </div>
-            
+
             {/* Profile Dropdown */}
             <div className="relative">
               <button
@@ -51,7 +51,7 @@ const AppLayout = ({ role }) => {
                   {user?.email}
                 </span>
                 <span className="material-icons text-slate-600">
-                  {isProfileOpen ? 'expand_less' : 'expand_more'}
+                  {isProfileOpen ? "expand_less" : "expand_more"}
                 </span>
               </button>
 
@@ -62,8 +62,12 @@ const AppLayout = ({ role }) => {
                   onClick={() => setProfileOpen(false)} // Close menu on click inside
                 >
                   <div className="p-2 border-b border-slate-200">
-                     <p className="text-sm font-medium text-slate-800">Welcome,</p>
-                     <p className="text-sm text-slate-500 truncate">{user?.email}</p>
+                    <p className="text-sm font-medium text-slate-800">
+                      Welcome,
+                    </p>
+                    <p className="text-sm text-slate-500 truncate">
+                      {user?.email}
+                    </p>
                   </div>
                   <div className="p-2">
                     <button

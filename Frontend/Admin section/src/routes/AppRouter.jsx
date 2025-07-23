@@ -55,11 +55,11 @@ const router = createBrowserRouter([
   },
   // Student Routes
   {
-    element: <ProtectedRoute allowedRoles={['student']} />,
+    element: <ProtectedRoute allowedRoles={['user']} />,
     children: [
       {
-        path: '/student',
-        element: <AppLayout role="student" />,
+        path: '/user',
+        element: <AppLayout role="user" />,
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },
           { path: 'dashboard', element: <StudentDashboard /> },
