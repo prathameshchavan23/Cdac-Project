@@ -8,18 +8,15 @@ import cdac_logo from "../assets/cdac_logo.png";
 
 const adminLinks = [
   { name: "Dashboard", path: "/staff/dashboard", icon: "dashboard" },
-  { name: "Marks", path: "/staff/marks", icon: "app_registration" },
+  { name: "Marks", path: "/staff/marks", icon: "assignment" }, 
+  { name: "Students", path: "/staff/students", icon: "group" },
   { name: "Attendance", path: "/staff/attendance", icon: "checklist_rtl" },
   { name: "TimeTable", path: "/staff/timetable", icon: "calendar_today" },
-  {
-    name: "Feedback",
-    icon: "feedback",
-    submenu: [
-      { name: "Form", path: "/staff/feedback" },
-      { name: "Dashboard", path: "/staff/feedback/dashboard" },
-      { name: "Reports", path: "/staff/feedback/reports" },
-    ],
-  },
+  { name: "Instructor", path: "/staff/instructor", icon: "person" },
+  { name: "Feedback", path: "/staff/feedback", icon: "feedback" },
+  { name: "Admin Details", path: "/staff/admindetails", icon: "edit" },
+   { name: "Module", path: "/staff/module", icon: "add" },
+  { name: "Lost and Found", path: "/staff/lost-and-found", icon: "search" },
 ];
 
 const userLinks = [
@@ -31,65 +28,74 @@ const userLinks = [
   { name: "Feedback", path: "/user/feedback", icon: "feedback" },
 ];
 
-
 const Sidebar = ({ role }) => {
   const location = useLocation();
   const [openSubmenus, setOpenSubmenus] = useState({});
 
+  // Logic remains the same: choose links based on role
   const links = role === "admin" ? adminLinks : userLinks;
 
-  // Effect to open the relevant submenu on page load or when the route changes
+  // Logic remains the same: open submenu if a child route is active
   useEffect(() => {
-    const activeSubmenu = links.find(item => 
-      item.submenu?.some(sub => location.pathname.startsWith(sub.path))
+    const activeSubmenu = links.find((item) =>
+      item.submenu?.some((sub) => location.pathname.startsWith(sub.path))
     );
     if (activeSubmenu) {
-      setOpenSubmenus(prev => ({ ...prev, [activeSubmenu.name]: true }));
+      setOpenSubmenus((prev) => ({ ...prev, [activeSubmenu.name]: true }));
     }
   }, [location.pathname, links]);
 
-
-  // Handles the open/close state for each submenu individually
+  // Logic remains the same: handle submenu toggling
   const handleSubmenuToggle = (name) => {
     setOpenSubmenus((prev) => ({
-      ...prev, // Keep the state of other submenus
+      ...prev,
       [name]: !prev[name],
     }));
   };
 
-  // --- Styling Classes for Links ---
+  // --- NEW Styling Classes for Links based on the image ---
   const navLinkClass = (isActive) =>
-    `flex items-center px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-700 transition-all duration-300 ${
-      isActive ? "bg-indigo-600 text-white font-semibold shadow-lg border-l-4 border-indigo-300" : "font-medium"
+    `flex items-center gap-4 px-6 py-4 rounded-lg text-gray-600 hover:bg-gray-200/60 transition-all duration-300 ${
+      isActive ? "text-blue-800 font-bold" : "font-medium"
     }`;
 
   const subNavLinkClass = (isActive) =>
-    `flex items-center pl-12 pr-4 py-2 rounded-md text-sm text-slate-300 hover:bg-slate-700/50 transition-all duration-300 ${
-      isActive ? "bg-slate-700 font-semibold text-white" : ""
+    `flex items-center pl-16 pr-4 py-2 rounded-md text-sm text-gray-500 hover:bg-gray-200/60 transition-all duration-300 ${
+      isActive ? "text-blue-800 font-semibold" : ""
     }`;
 
   return (
-    <aside className="w-64 bg-slate-800 text-white min-h-screen flex flex-col shadow-xl">
-      {/* Logo and Title Section */}
-      <div className="p-6 border-b border-slate-700 flex flex-col items-center">
+    // Updated main container style
+    <aside className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
+      {/* Updated Logo and Title Section */}
+      <div className="p-6 flex flex-col items-center border-b border-gray-200">
         <img src={cdac_logo} alt="CDAC Logo" className="w-40 h-20 mb-3" />
-        <h1 className="text-xl font-bold tracking-wider text-slate-100">CDAC Portal</h1>
+        <h1 className="text-lg font-semibold tracking-wider text-gray-700">
+          CDAC-ACTS
+        </h1>
       </div>
 
-      {/* Navigation Links Section */}
+      {/* Navigation Links Section - Logic is the same, classes are updated */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {links.map((item) =>
           item.submenu ? (
             <div key={item.name}>
+              {/* The button now uses the same base style as the NavLink */}
               <button
                 onClick={() => handleSubmenuToggle(item.name)}
-                className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-700 transition-all duration-300"
+                className={`flex items-center justify-between w-full text-left ${navLinkClass(
+                  location.pathname.startsWith("/staff/feedback")
+                )}`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="material-icons">{item.icon}</span>
-                  <span className="font-medium">{item.name}</span>
+                <div className="flex items-center gap-4">
+                  <span className="material-icons text-2xl">{item.icon}</span>
+                  <span>{item.name}</span>
                 </div>
-                <span className={`material-icons text-lg transition-transform duration-300 ${openSubmenus[item.name] ? "rotate-180" : ""}`}>
+                <span
+                  className={`material-icons text-lg transition-transform duration-300 ${
+                    openSubmenus[item.name] ? "rotate-180" : ""
+                  }`}
+                >
                   expand_more
                 </span>
               </button>
@@ -99,7 +105,7 @@ const Sidebar = ({ role }) => {
                   openSubmenus[item.name] ? "max-h-96" : "max-h-0"
                 }`}
               >
-                <div className="mt-2 flex flex-col space-y-1">
+                <div className="mt-1 flex flex-col space-y-1">
                   {item.submenu.map((sub) => (
                     <NavLink
                       key={sub.name}
@@ -118,17 +124,12 @@ const Sidebar = ({ role }) => {
               to={item.path}
               className={({ isActive }) => navLinkClass(isActive)}
             >
-              <span className="material-icons mr-3">{item.icon}</span>
-              {item.name}
+              <span className="material-icons text-2xl">{item.icon}</span>
+              <span>{item.name}</span>
             </NavLink>
           )
         )}
       </nav>
-
-      {/* Footer Section */}
-      <div className="p-4 mt-auto border-t border-slate-700 text-center">
-        <p className="text-xs text-slate-400">© {new Date().getFullYear()} CDAC-ACTS</p>
-      </div>
     </aside>
   );
 };
