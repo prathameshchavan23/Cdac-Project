@@ -46,11 +46,16 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 - Feedback Submission: View active feedback sessions and submit anonymous feedback for instructors and modules.
 ## Tech Stack
 
-- Backend: Node.js with WebSocket for server-side data processing
+- Backend: Springboot, MySQL
 
-- Frontend: HTML5, CSS3, JavaScript
+- Frontend: HTML5, CSS3, JavaScript, React
 
-- Real-Time Data: Binance WebSocket API
+## 🎨 Design
+
+The UI/UX for this project was designed in Figma. You can view the complete design file, including components, wireframes, and prototypes, here:
+
+[**View Figma Design File**](https://www.figma.com/file/your-file-id/your-project-name)
+
   
 # ER Diagram
 <details>
