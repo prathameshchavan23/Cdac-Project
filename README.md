@@ -54,7 +54,7 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 
 The UI/UX for this project was designed in Figma. You can view the complete design file, including components, wireframes, and prototypes, here:
 
-[**View Figma Design File**](https://www.figma.com/file/your-file-id/your-project-name)
+[**View Figma Design File**]([https://www.figma.com/file/your-file-id/your-project-name](https://www.figma.com/design/OXH5baVMXqzpIT1g49ek9O/CDAC-ERP?node-id=4023-7063&p=f&t=brHIg17ewuVR0Sz6-0))
 
   
 # ER Diagram
