@@ -157,16 +157,41 @@ const StudentForm = ({ initialData, onSave, onCancel }) => {
 
   const validateForm = () => {
     const newErrors = {};
+    const nameRegex = /^[a-zA-Z\s]+$/;
     
+    // First Name Validation
     if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    else if (!nameRegex.test(formData.firstName)) newErrors.firstName = "Name can only contain letters and spaces";
+    
+    // Last Name Validation
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    else if (!nameRegex.test(formData.lastName)) newErrors.lastName = "Name can only contain letters and spaces";
+
+    // Phone Number Validation
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
     else if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = "Phone must be 10 digits";
+    
+    // Email Validation
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
-    if (!formData.dob) newErrors.dob = "Date of birth is required";
+    
+    // Date of Birth Validation
+    if (!formData.dob) {
+        newErrors.dob = "Date of birth is required";
+    } else {
+        const today = new Date();
+        const dobDate = new Date(formData.dob);
+        today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+        if (dobDate > today) {
+            newErrors.dob = "Date of birth cannot be in the future";
+        }
+    }
+
+    // Address validation
     if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.departmentId.trim()) newErrors.departmentId = "Department ID is required";
+    
+    // Department validation
+    if (!formData.departmentId.trim()) newErrors.departmentId = "Department is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -327,7 +352,7 @@ const StudentForm = ({ initialData, onSave, onCancel }) => {
 
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Department ID *
+          Department *
         </label>
         <select
           name="departmentId"
@@ -487,7 +512,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange, itemsPerPage, total
         <span className="text-sm text-gray-600">
           Showing {startItem}-{endItem} of {totalItems} students
         </span>
-        {/* "Show" Dropdown Removed */}
       </div>
 
       <div className="flex items-center gap-2">
@@ -649,7 +673,7 @@ const AdminStudents = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 p-4 md:p-8">
-      <style jsx>{`
+      <style>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
           height: 6px;
@@ -803,12 +827,12 @@ const AdminStudents = () => {
         </div>
         {filteredStudents.length > 0 && (
            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-              itemsPerPage={itemsPerPage}
-              totalItems={filteredStudents.length}
-            />
+             currentPage={currentPage}
+             totalPages={totalPages}
+             onPageChange={handlePageChange}
+             itemsPerPage={itemsPerPage}
+             totalItems={filteredStudents.length}
+           />
         )}
       </div>
 

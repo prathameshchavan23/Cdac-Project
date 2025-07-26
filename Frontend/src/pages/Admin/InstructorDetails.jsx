@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Edit, X } from 'lucide-react';
+import { Edit, X, Plus } from 'lucide-react';
 
 // --- Mock Data ---
 const initialInstructors = [
-    { id: 'ID1584852', firstName: 'Praful', lastName: 'Sharma', email: 'praful69@gmail.com', phone: '6969696969' },
+    { id: 'ID1584852', firstName: 'Praful', lastName: 'Sharma', email: 'praful69@gmail.com', phone: '9876543210' },
     { id: 'ID1584853', firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com', phone: '9876543211' },
     { id: 'ID1584854', firstName: 'John', lastName: 'Smith', email: 'john.smith@example.com', phone: '9876543212' },
 ];
@@ -38,72 +38,95 @@ const InstructorForm = ({ initialData, onSave, onCancel }) => {
     const [formData, setFormData] = useState(
         initialData || { firstName: '', lastName: '', email: '', phone: '' }
     );
+    const [errors, setErrors] = useState({});
     
     const originalData = useMemo(() => initialData || { firstName: '', lastName: '', email: '', phone: '' }, [initialData]);
+
+    const validate = () => {
+        const newErrors = {};
+        
+        // First Name validation
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = 'First name is required.';
+        } else if (!/^[A-Za-z]{2,}$/.test(formData.firstName)) {
+            newErrors.firstName = 'First name must be at least 2 letters and contain no numbers or symbols.';
+        }
+
+        // Last Name validation
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = 'Last name is required.';
+        } else if (!/^[A-Za-z]{2,}$/.test(formData.lastName)) {
+            newErrors.lastName = 'Last name must be at least 2 letters and contain no numbers or symbols.';
+        }
+
+        // Email validation
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Please enter a valid email address.';
+        }
+
+        // Phone validation
+        if (!formData.phone.trim()) {
+            newErrors.phone = 'Phone number is required.';
+        } else if (!/^\d{10}$/.test(formData.phone)) {
+            newErrors.phone = 'Phone number must be exactly 10 digits.';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
 
     const handleReset = () => {
         setFormData(originalData);
+        setErrors({});
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave(formData);
+        if (validate()) {
+            onSave(formData);
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="First Name here..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-                    required
+                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name here..."
+                    className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 transition-colors ${errors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                 />
+                {errors.firstName && <p className="text-red-600 text-xs mt-1">{errors.firstName}</p>}
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="Last Name here..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-                    required
+                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name here..."
+                    className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 transition-colors ${errors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                 />
+                {errors.lastName && <p className="text-red-600 text-xs mt-1">{errors.lastName}</p>}
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Example@email.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-                    required
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Example@email.com"
+                    className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 transition-colors ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                 />
+                {errors.email && <p className="text-red-600 text-xs mt-1">{errors.email}</p>}
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="9876543210..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
-                    required
+                <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="9876543210"
+                    className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 transition-colors ${errors.phone ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                 />
+                {errors.phone && <p className="text-red-600 text-xs mt-1">{errors.phone}</p>}
             </div>
             <div className="flex justify-end gap-4 pt-4">
                 <button type="button" onClick={handleReset} className="px-6 py-2 bg-[#0d214f] text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition">
@@ -120,30 +143,65 @@ const InstructorForm = ({ initialData, onSave, onCancel }) => {
 // --- Edit Instructor ID Prompt Modal ---
 const EditPromptModal = ({ isOpen, onClose, onConfirm }) => {
     const [instructorId, setInstructorId] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = () => {
-        if (instructorId.trim()) {
-            onConfirm(instructorId);
-            setInstructorId('');
-        } else {
-            alert('Please enter an Instructor ID.');
+        if (!instructorId.trim()) {
+            setError('Please enter an Instructor ID.');
+            return;
         }
+        onConfirm(instructorId);
+        setInstructorId('');
+        setError('');
+    };
+    
+    const handleClose = () => {
+        setInstructorId('');
+        setError('');
+        onClose();
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Edit Instructor" size="sm">
+        <Modal isOpen={isOpen} onClose={handleClose} title="Edit Instructor" size="sm">
             <div className="space-y-4 text-center">
-                <p className="text-gray-600">Instructor ID (Autogenerated)</p>
+                <p className="text-gray-600">Enter the ID of the instructor you wish to edit.</p>
                 <input
                     type="text"
                     value={instructorId}
-                    onChange={(e) => setInstructorId(e.target.value)}
-                    placeholder="Enter here ....."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => {
+                        setInstructorId(e.target.value.toUpperCase());
+                        if (error) setError('');
+                    }}
+                    placeholder="Enter ID here..."
+                    className={`w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
                 />
-                <button onClick={handleSubmit} className="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition">
-                    OK
+                {error && <p className="text-red-600 text-sm">{error}</p>}
+                <button onClick={handleSubmit} className="w-full px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">
+                    Find Instructor
                 </button>
+            </div>
+        </Modal>
+    );
+};
+
+// --- Delete Confirmation Modal ---
+const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, instructorName }) => {
+    if (!isOpen) return null;
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} title="Confirm Deletion" size="sm">
+            <div className="text-center">
+                <p className="text-gray-600 mb-6">
+                    Are you sure you want to delete the instructor <span className="font-bold">{instructorName}</span>? This action cannot be undone.
+                </p>
+                <div className="flex justify-center gap-4">
+                    <button onClick={onClose} className="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition">
+                        Cancel
+                    </button>
+                    <button onClick={onConfirm} className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
+                        Yes, Delete
+                    </button>
+                </div>
             </div>
         </Modal>
     );
@@ -157,6 +215,8 @@ const InstructorDetails = () => {
     const [isEditPromptOpen, setEditPromptOpen] = useState(false);
     const [isEditFormOpen, setEditFormOpen] = useState(false);
     const [editingInstructor, setEditingInstructor] = useState(null);
+    const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [instructorToDelete, setInstructorToDelete] = useState(null);
 
     const today = new Date().toLocaleDateString("en-US", {
         year: "numeric",
@@ -192,9 +252,16 @@ const InstructorDetails = () => {
         setEditingInstructor(null);
     };
 
-    const handleDelete = (idToDelete) => {
-        if(window.confirm(`Are you sure you want to delete instructor with ID: ${idToDelete}?`)) {
-            setInstructors(prev => prev.filter(inst => inst.id !== idToDelete));
+    const handleDeleteClick = (instructor) => {
+        setInstructorToDelete(instructor);
+        setDeleteConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (instructorToDelete) {
+            setInstructors(prev => prev.filter(inst => inst.id !== instructorToDelete.id));
+            setDeleteConfirmOpen(false);
+            setInstructorToDelete(null);
         }
     };
 
@@ -211,7 +278,7 @@ const InstructorDetails = () => {
                         <button 
                             onClick={() => setRegisterModalOpen(true)}
                             className="flex items-center gap-2 px-5 py-2 bg-[#0d214f] text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                            <Plus size={18} />
                             Register New Instructor
                         </button>
                         <button 
@@ -242,7 +309,7 @@ const InstructorDetails = () => {
                                         <td className="p-3 text-gray-700">{inst.phone}</td>
                                         <td className="p-3 text-center">
                                             <button 
-                                                onClick={() => handleDelete(inst.id)}
+                                                onClick={() => handleDeleteClick(inst)}
                                                 className="px-4 py-1 bg-red-600 text-white font-bold rounded-md hover:bg-red-700 transition flex items-center gap-1 mx-auto">
                                                 <X size={16} />
                                                 Delete
@@ -264,13 +331,13 @@ const InstructorDetails = () => {
                         </table>
                     </div>
                      <div className="flex justify-end gap-4 mt-6">
-                        <button className="px-8 py-2 bg-[#0d214f] text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition">
-                            Reset
-                        </button>
-                        <button className="px-8 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
-                            Save
-                        </button>
-                    </div>
+                         <button className="px-8 py-2 bg-[#0d214f] text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition">
+                             Reset
+                         </button>
+                         <button className="px-8 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">
+                             Save
+                         </button>
+                     </div>
                 </div>
             </div>
 
@@ -294,6 +361,13 @@ const InstructorDetails = () => {
                     />
                 </Modal>
             )}
+
+            <DeleteConfirmationModal
+                isOpen={isDeleteConfirmOpen}
+                onClose={() => setDeleteConfirmOpen(false)}
+                onConfirm={handleConfirmDelete}
+                instructorName={instructorToDelete ? `${instructorToDelete.firstName} ${instructorToDelete.lastName}` : ''}
+            />
         </div>
     );
 };

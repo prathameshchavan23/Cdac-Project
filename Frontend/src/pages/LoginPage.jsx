@@ -20,7 +20,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
-    
+
     try {
       const userData = await fakeAuthApi(email, password);
 
@@ -35,14 +35,14 @@ const LoginPage = () => {
       }
 
       dispatch(loginSuccess(userData));
-      
+
       // Navigate based on role after successful login
-      if (userData.role === 'student') {
-        navigate('/user/dashboard');
-      } else if (userData.role === 'staff') {
-        navigate('/staff/dashboard');
+      if (userData.role === "student") {
+        navigate("/user/dashboard");
+      } else if (userData.role === "staff") {
+        navigate("/staff/dashboard");
       } else {
-        navigate('/dashboard'); // fallback
+        navigate("/dashboard"); // fallback
       }
     } catch (err) {
       dispatch(loginFailure(err.toString()));
@@ -55,15 +55,14 @@ const LoginPage = () => {
         <h2 className="text-3xl font-bold text-center text-gray-800">
           Login as {role.charAt(0).toUpperCase() + role.slice(1)}
         </h2>
-        
+
         {/* Demo credentials info */}
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
           <p className="text-sm text-blue-700 font-medium">Demo Credentials:</p>
           <p className="text-xs text-blue-600">
-            {role === 'student' 
-              ? 'Student: user@example.com / password' 
-              : 'Staff: admin@example.com / password'
-            }
+            {role === "student"
+              ? "Student: user@example.com / password"
+              : "Staff: admin@example.com / password"}
           </p>
         </div>
 
@@ -86,7 +85,7 @@ const LoginPage = () => {
               placeholder="you@example.com"
             />
           </div>
-          
+
           <div>
             <label
               htmlFor="password"
@@ -121,7 +120,7 @@ const LoginPage = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        
+
         <div className="text-sm text-center text-gray-600">
           <p>
             {/* FIX: Changed role check from "user" to "student" */}
@@ -141,15 +140,6 @@ const LoginPage = () => {
                 Login as Student instead
               </Link>
             )}
-          </p>
-          <p className="mt-2">
-            Don't have an account?{" "}
-            <Link
-              to="/signup"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              Sign up
-            </Link>
           </p>
         </div>
       </div>

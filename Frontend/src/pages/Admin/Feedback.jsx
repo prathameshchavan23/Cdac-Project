@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { Edit, X, Plus, Trash2 } from 'lucide-react';
 
 // ===================================================================================
 // --- MOCK DATA (DATABASE SIMULATION) ---
@@ -6,9 +7,9 @@ import React, { useState } from 'react';
 // ===================================================================================
 
 const initialFeedbacks = [
-    { id: 1, instructorName: 'Praful', moduleName: 'Core Java', status: 'Active' },
-    { id: 2, instructorName: 'Saad', moduleName: 'C++', status: 'Active' },
-    { id: 3, instructorName: 'Saurabh', moduleName: 'DBMS', status: 'Closed' },
+    { id: 1, instructorName: 'Praful', moduleName: 'Core Java', status: 'Active', lastDate: '2025-08-10' },
+    { id: 2, instructorName: 'Saad', moduleName: 'C++', status: 'Active', lastDate: '2025-08-12' },
+    { id: 3, instructorName: 'Saurabh', moduleName: 'DBMS', status: 'Closed', lastDate: '2025-07-20' },
 ];
 
 const facultyOptions = ['Praful', 'Saad', 'Saurabh', 'Dr. Eleanor Vance'];
@@ -37,9 +38,7 @@ const initialReports = {
 // ===================================================================================
 // --- MAIN COMPONENT: FeedbackFeature ---
 // This single component manages the state and renders one of three views:
-// 1. FeedbackList: The main table of all feedback instances.
-// 2. FeedbackDashboard: The summary view for a single feedback instance.
-// 3. FeedbackReports: The detailed comments view for a single feedback instance.
+// FeedbackList: The main table of all feedback instances.
 // ===================================================================================
 
 const Feedback = () => {
@@ -49,7 +48,11 @@ const Feedback = () => {
     const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
     const [reports, setReports] = useState(initialReports);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
-    const [newFeedback, setNewFeedback] = useState({ moduleName: '', facultyName: '', lastDate: '' });
+    const [isEditModalOpen, setEditModalOpen] = useState(false);
+    const [editingFeedback, setEditingFeedback] = useState(null);
+    const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [feedbackToDelete, setFeedbackToDelete] = useState(null);
+    const [newFeedback, setNewFeedback] = useState({ moduleName: '', instructorName: '', lastDate: '' });
 
     // --- NAVIGATION HANDLERS ---
     const navigateToDashboard = (id) => {
@@ -69,16 +72,33 @@ const Feedback = () => {
     const handleAddFeedback = (e) => {
         e.preventDefault();
         const newId = feedbacks.length > 0 ? Math.max(...feedbacks.map(f => f.id)) + 1 : 1;
-        const newEntry = { id: newId, instructorName: newFeedback.facultyName, moduleName: newFeedback.moduleName, status: 'Active' };
+        const newEntry = { id: newId, ...newFeedback, status: 'Active' };
         setFeedbacks([...feedbacks, newEntry]);
-        setNewFeedback({ moduleName: '', facultyName: '', lastDate: '' });
+        setNewFeedback({ moduleName: '', instructorName: '', lastDate: '' });
         setAddModalOpen(false);
     };
     
-    const handleDeleteFeedback = (id) => {
-        if (window.confirm('Are you sure you want to delete this feedback entry?')) {
-            setFeedbacks(feedbacks.filter(f => f.id !== id));
-        }
+    const handleEditClick = (feedback) => {
+        setEditingFeedback(feedback);
+        setEditModalOpen(true);
+    };
+
+    const handleUpdateFeedback = (e) => {
+        e.preventDefault();
+        setFeedbacks(feedbacks.map(f => f.id === editingFeedback.id ? editingFeedback : f));
+        setEditModalOpen(false);
+        setEditingFeedback(null);
+    };
+
+    const handleDeleteClick = (id) => {
+        setFeedbackToDelete(id);
+        setDeleteConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        setFeedbacks(feedbacks.filter(f => f.id !== feedbackToDelete));
+        setDeleteConfirmOpen(false);
+        setFeedbackToDelete(null);
     };
 
     const handleDeleteComment = (commentId) => {
@@ -100,6 +120,7 @@ const Feedback = () => {
     if (view === 'list') {
         return (
             <>
+                {/* Add/Edit Modals */}
                 {isAddModalOpen && (
                     <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
                         <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md relative">
@@ -114,9 +135,9 @@ const Feedback = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label htmlFor="facultyName" className="block text-sm font-medium text-gray-700 mb-1">Faculty Name</label>
-                                    <select id="facultyName" value={newFeedback.facultyName} onChange={e => setNewFeedback({...newFeedback, facultyName: e.target.value})} className="w-full p-3 border rounded-lg bg-white" required>
-                                        <option value="" disabled>Select Faculty</option>
+                                    <label htmlFor="instructorName" className="block text-sm font-medium text-gray-700 mb-1">Instructor Name</label>
+                                    <select id="instructorName" value={newFeedback.instructorName} onChange={e => setNewFeedback({...newFeedback, instructorName: e.target.value})} className="w-full p-3 border rounded-lg bg-white" required>
+                                        <option value="" disabled>Select Instructor</option>
                                         {facultyOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                     </select>
                                 </div>
@@ -132,6 +153,45 @@ const Feedback = () => {
                         </div>
                     </div>
                 )}
+                {isEditModalOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+                        <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+                            <button onClick={() => setEditModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+                            <h2 className="text-2xl font-bold mb-6 text-center">Edit Feedback</h2>
+                            <form onSubmit={handleUpdateFeedback} className="space-y-6">
+                                <div>
+                                    <label htmlFor="editModuleName" className="block text-sm font-medium text-gray-700 mb-1">Module Name</label>
+                                    <select id="editModuleName" value={editingFeedback.moduleName} onChange={e => setEditingFeedback({...editingFeedback, moduleName: e.target.value})} className="w-full p-3 border rounded-lg bg-white" required>
+                                        {moduleOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="editInstructorName" className="block text-sm font-medium text-gray-700 mb-1">Instructor Name</label>
+                                    <select id="editInstructorName" value={editingFeedback.instructorName} onChange={e => setEditingFeedback({...editingFeedback, instructorName: e.target.value})} className="w-full p-3 border rounded-lg bg-white" required>
+                                        {facultyOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                    </select>
+                                </div>
+                                <div className="flex justify-end gap-4 pt-4">
+                                    <button type="button" onClick={() => setEditModalOpen(false)} className="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">Cancel</button>
+                                    <button type="submit" className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700">Update Feedback</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+                {isDeleteConfirmOpen && (
+                     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                         <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm text-center">
+                            <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+                            <p className="text-slate-600 mb-6">Are you sure you want to delete this feedback entry? This action cannot be undone.</p>
+                            <div className="flex justify-center gap-4">
+                                <button onClick={() => setDeleteConfirmOpen(false)} className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300">No, Cancel</button>
+                                <button onClick={handleConfirmDelete} className="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700">Yes, Delete</button>
+                            </div>
+                         </div>
+                     </div>
+                )}
+
                 <div className="p-8 bg-slate-50 min-h-full">
                     <div className="flex justify-between items-center mb-6">
                         <div>
@@ -140,10 +200,7 @@ const Feedback = () => {
                         </div>
                         <div className="flex space-x-2">
                             <button onClick={() => setAddModalOpen(true)} className="bg-blue-800 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-900 flex items-center gap-2">
-                                <span className="material-icons text-base">add</span> Add New Feedback
-                            </button>
-                            <button className="bg-gray-800 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-gray-900 flex items-center gap-2">
-                                <span className="material-icons text-base">history</span> Check Past Records
+                                <Plus size={18} /> Add New Feedback
                             </button>
                         </div>
                     </div>
@@ -169,8 +226,8 @@ const Feedback = () => {
                                                 </button>
                                             </td>
                                             <td className="p-4 flex justify-center items-center gap-2">
-                                                <button className="bg-blue-600 text-white px-4 py-1 rounded-md text-sm flex items-center gap-1"><span className="material-icons text-sm">edit</span>Edit</button>
-                                                <button onClick={() => handleDeleteFeedback(item.id)} className="bg-red-600 text-white px-4 py-1 rounded-md text-sm flex items-center gap-1"><span className="material-icons text-sm">delete</span>Delete</button>
+                                                <button onClick={() => handleEditClick(item)} className="bg-blue-600 text-white px-4 py-1 rounded-md text-sm flex items-center gap-1"><Edit size={14} />Edit</button>
+                                                <button onClick={() => handleDeleteClick(item.id)} className="bg-red-600 text-white px-4 py-1 rounded-md text-sm flex items-center gap-1"><Trash2 size={14} />Delete</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -257,7 +314,7 @@ const Feedback = () => {
                                         <td className="p-3">{report.comment}</td>
                                         <td className="p-3 text-center">
                                             <button onClick={() => handleDeleteComment(report.id)} className="bg-red-600 text-white px-3 py-1 rounded-md text-sm flex items-center gap-1 mx-auto">
-                                                <span className="material-icons text-sm">delete</span> Delete
+                                                <Trash2 size={14} /> Delete
                                             </button>
                                         </td>
                                     </tr>

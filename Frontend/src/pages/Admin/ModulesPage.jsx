@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -11,22 +11,16 @@ import {
 
 // --- Mock Data ---
 const initialModules = [
-  { id: "CS101", name: "COSSDM", departmentId: "10" },
-  { id: "CS102", name: "ADV JAVA", departmentId: "10" },
-  { id: "CS103", name: "Dot Net", departmentId: "10" },
-  { id: "CS201", name: "Database Management", departmentId: "20" },
-  { id: "CS202", name: "Operating Systems", departmentId: "20" },
-  { id: "CS301", name: "Networking", departmentId: "30" },
-  { id: "CS302", name: "Software Engineering", departmentId: "30" },
-  { id: "CS303", name: "Web Technologies", departmentId: "30" },
-  { id: "CS401", name: "Machine Learning", departmentId: "40" },
-  { id: "CS402", name: "Artificial Intelligence", departmentId: "40" },
-];
-
-const upcomingEventsData = [
-  { title: "Math 101 Exam", date: "2024-10-21" },
-  { title: "History 202 Lecture", date: "2024-10-22" },
-  { title: "Physics Lab", date: "2024-10-24" },
+  { id: "CS101", name: "COSSDM", departmentId: "10", date: "2025-08-10", time: "10:00" },
+  { id: "CS102", name: "ADV JAVA", departmentId: "10", date: "2025-08-12", time: "11:00" },
+  { id: "CS103", name: "Dot Net", departmentId: "10", date: "2025-08-15", time: "14:00" },
+  { id: "CS201", name: "Database Management", departmentId: "20", date: "2025-09-01", time: "09:00" },
+  { id: "CS202", name: "Operating Systems", departmentId: "20", date: "2025-09-05", time: "13:00" },
+  { id: "CS301", name: "Networking", departmentId: "30", date: "2025-09-10", time: "10:00" },
+  { id: "CS302", name: "Software Engineering", departmentId: "30", date: "2025-09-15", time: "11:00" },
+  { id: "CS303", name: "Web Technologies", departmentId: "30", date: "2025-09-20", time: "14:00" },
+  { id: "CS401", name: "Machine Learning", departmentId: "40", date: "2025-10-01", time: "09:00" },
+  { id: "CS402", name: "Artificial Intelligence", departmentId: "40", date: "2025-10-05", time: "13:00" },
 ];
 
 const ITEMS_PER_PAGE = 5;
@@ -48,6 +42,18 @@ const ModulesPage = () => {
     month: "long",
     day: "numeric",
   });
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // --- Derived Upcoming Events from Modules ---
+  const upcomingEvents = useMemo(() => {
+    return modules
+      .filter(module => new Date(module.date) >= today)
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .slice(0, 5); // Show the next 5 upcoming modules
+  }, [modules, today]);
+
 
   // --- Pagination Logic ---
   const paginatedModules = useMemo(() => {
@@ -69,19 +75,13 @@ const ModulesPage = () => {
 
   const handleSaveModule = (moduleData) => {
     if (editingModule) {
-      // Update existing module
       setModules((prev) =>
         prev.map((m) =>
           m.id === editingModule.id ? { ...m, ...moduleData } : m
         )
       );
     } else {
-      // Add new module with validation for unique ID
-      if (modules.some((m) => m.id === moduleData.id)) {
-        alert("Module ID already exists. Please use a unique ID.");
-        return;
-      }
-      setModules((prev) => [moduleData, ...prev]);
+      setModules((prev) => [...prev, moduleData].sort((a, b) => new Date(a.date) - new Date(b.date)));
     }
     setAddEditModalOpen(false);
     setEditingModule(null);
@@ -109,7 +109,7 @@ const ModulesPage = () => {
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
           />
-          <UpcomingEvents events={upcomingEventsData} />
+          <UpcomingEvents events={upcomingEvents} />
         </div>
 
         {/* Main Content */}
@@ -149,6 +149,7 @@ const ModulesPage = () => {
         onClose={() => setAddEditModalOpen(false)}
         onSave={handleSaveModule}
         module={editingModule}
+        existingModules={modules}
       />
       <ConfirmDeleteModal
         isOpen={!!deletingModuleId}
@@ -255,25 +256,28 @@ const CalendarView = ({
 // --- Upcoming Events Component ---
 const UpcomingEvents = ({ events }) => (
   <div className="bg-white p-6 rounded-xl shadow-lg">
-    <h3 className="font-bold text-lg mb-4">Upcoming Events</h3>
+    <div className="flex justify-between items-center mb-4">
+        <h3 className="font-bold text-lg">Upcoming Modules</h3>
+    </div>
     <div className="space-y-4">
-      {events.map((event, i) => (
-        <div key={i} className="flex items-start gap-4">
+      {events.length > 0 ? events.map((event) => (
+        <div key={event.id} className="flex items-start gap-4 group">
           <div className="bg-gray-100 p-3 rounded-lg">
             <Calendar size={20} className="text-gray-500" />
           </div>
-          <div>
-            <p className="font-semibold text-gray-800">{event.title}</p>
+          <div className="flex-grow">
+            <p className="font-semibold text-gray-800">{event.name}</p>
             <p className="text-sm text-gray-500">
               {new Date(event.date).toLocaleDateString("en-US", {
                 month: "long",
                 day: "numeric",
-                year: "numeric",
               })}
             </p>
           </div>
         </div>
-      ))}
+      )) : (
+        <p className="text-sm text-gray-500">No upcoming modules scheduled.</p>
+      )}
     </div>
   </div>
 );
@@ -396,97 +400,117 @@ const ModalShell = ({ isOpen, onClose, title, children }) => {
 };
 
 // --- Add/Edit Module Modal ---
-const ModuleModal = ({ isOpen, onClose, onSave, module }) => {
-  const [formData, setFormData] = useState({
-    id: "",
-    name: "",
-    departmentId: "",
-  });
+const ModuleModal = ({ isOpen, onClose, onSave, module, existingModules }) => {
+  const [formData, setFormData] = useState({ id: "", name: "", departmentId: "", date: "", time: "" });
+  const [errors, setErrors] = useState({});
 
   React.useEffect(() => {
-    setFormData(module || { id: "", name: "", departmentId: "" });
+    setFormData(module || { id: "", name: "", departmentId: "", date: "", time: "" });
+    setErrors({});
   }, [module, isOpen]);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.id.trim()) newErrors.id = "Module ID is required.";
+    else if (!/^[A-Z]{2,}\d{3,}$/.test(formData.id)) newErrors.id = "Format must be like CS101 (2+ letters, 3+ numbers).";
+    else if (!module && existingModules.some(m => m.id === formData.id)) newErrors.id = "This Module ID already exists.";
+
+    if (!formData.name.trim()) newErrors.name = "Module name is required.";
+    else if (!/^[A-Za-z\s]{3,}$/.test(formData.name)) newErrors.name = "Name must be at least 3 letters long.";
+    
+    if (!formData.departmentId.trim()) newErrors.departmentId = "Department ID is required.";
+    else if (!/^\d+$/.test(formData.departmentId)) newErrors.departmentId = "Department ID must be a number.";
+    
+    if (!formData.date) {
+        newErrors.date = "Date is required.";
+    } else if (!formData.time) {
+        newErrors.time = "Time is required.";
+    } else {
+        const selectedDateTime = new Date(`${formData.date}T${formData.time}`);
+        if (selectedDateTime < new Date()) {
+            newErrors.date = "Cannot schedule modules in the past.";
+            newErrors.time = "Time cannot be in the past.";
+        }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let processedValue = value;
+    if (name === 'id' || name === 'name') {
+        processedValue = value.toUpperCase();
+    }
+    setFormData((prev) => ({ ...prev, [name]: processedValue }));
+    if (errors[name]) {
+        setErrors(prev => ({ ...prev, [name]: null }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+    if (validate()) {
+        onSave(formData);
+    }
   };
 
   const handleReset = () => {
-    setFormData(module || { id: "", name: "", departmentId: "" });
+    setFormData(module || { id: "", name: "", departmentId: "", date: "", time: "" });
+    setErrors({});
   };
 
   return (
-    <ModalShell
-      isOpen={isOpen}
-      onClose={onClose}
-      title={module ? "Edit Module Details" : "Enter New Module Details"}
-    >
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <ModalShell isOpen={isOpen} onClose={onClose} title={module ? "Edit Module Details" : "Enter New Module Details"}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Module ID
-          </label>
-          <input
-            name="id"
-            value={formData.id}
-            onChange={handleChange}
-            placeholder="CS101"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          <label className="block text-sm font-medium text-gray-700 mb-1">Module ID</label>
+          <input name="id" value={formData.id} onChange={handleChange} placeholder="e.g., CS101"
+            className={`w-full px-4 py-2 border rounded-lg ${errors.id ? 'border-red-500' : 'border-gray-300'}`}
             disabled={!!module}
-            required
           />
+           {errors.id && <p className="text-red-500 text-xs mt-1">{errors.id}</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Module Name
-          </label>
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="ADV JAVA etc......."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            required
+          <label className="block text-sm font-medium text-gray-700 mb-1">Module Name</label>
+          <input name="name" value={formData.name} onChange={handleChange} placeholder="e.g., ADVANCED JAVA"
+            className={`w-full px-4 py-2 border rounded-lg ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
           />
+           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Department ID
-          </label>
-          <input
-            name="departmentId"
-            value={formData.departmentId}
-            onChange={handleChange}
-            placeholder="10,20,...."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            required
+          <label className="block text-sm font-medium text-gray-700 mb-1">Department ID</label>
+          <input name="departmentId" value={formData.departmentId} onChange={handleChange} placeholder="e.g., 10"
+            className={`w-full px-4 py-2 border rounded-lg ${errors.departmentId ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.departmentId && <p className="text-red-500 text-xs mt-1">{errors.departmentId}</p>}
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <input name="date" type="date" value={formData.date} onChange={handleChange}
+                className={`w-full px-4 py-2 border rounded-lg ${errors.date ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
+              <input name="time" type="time" value={formData.time} onChange={handleChange}
+                className={`w-full px-4 py-2 border rounded-lg ${errors.time ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
+            </div>
         </div>
         <div className="flex justify-end gap-4 pt-4">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="px-6 py-2 bg-[#0d214f] text-white font-semibold rounded-lg"
-          >
-            Reset
-          </button>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg"
-          >
-            Save
-          </button>
+          <button type="button" onClick={handleReset} className="px-6 py-2 bg-[#0d214f] text-white font-semibold rounded-lg">Reset</button>
+          <button type="submit" className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg">Save</button>
         </div>
       </form>
     </ModalShell>
   );
 };
+
 
 // --- Confirmation Modal for Deletion ---
 const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, moduleName }) => {
@@ -498,16 +522,10 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, moduleName }) => {
           <span className="font-bold">"{moduleName}"</span>?
         </p>
         <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="px-8 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition"
-          >
+          <button onClick={onConfirm} className="px-8 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
             Yes
           </button>
-          <button
-            onClick={onClose}
-            className="px-8 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition"
-          >
+          <button onClick={onClose} className="px-8 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition">
             No
           </button>
         </div>

@@ -3,8 +3,8 @@ import { Edit, X, UserPlus, CheckCircle, AlertTriangle } from 'lucide-react';
 
 // --- Mock Data ---
 const initialAdmins = [
-    { id: 'AD12345', firstName: 'Swati', lastName: 'Salunkhe', email: 'swats69@gmail.com', departmentId: '69', phone: '6969696969', dob: '1990-01-01', address: '123 Tech Park, Pune' },
-    { id: 'AD67890', firstName: 'Raj', lastName: 'Patel', email: 'raj.patel@example.com', departmentId: '20', phone: '9876543210', dob: '1985-05-10', address: '456 Silicon Valley, Mumbai' },
+    { id: 'AD12345', firstName: 'Swati', lastName: 'Salunkhe', email: 'swats69@gmail.com', departmentId: '69', phone: '6969696969', address: '123 Tech Park, Pune' },
+    { id: 'AD67890', firstName: 'Raj', lastName: 'Patel', email: 'raj.patel@example.com', departmentId: '20', phone: '9876543210', address: '456 Silicon Valley, Mumbai' },
 ];
 
 // --- Reusable Modal Component ---
@@ -46,35 +46,96 @@ const StatusModal = ({ isOpen, onClose, success, title, message, id, errorCode }
     );
 };
 
+// --- Delete Confirmation Modal ---
+const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, adminName }) => {
+    if (!isOpen) return null;
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} size="sm">
+            <div className="text-center">
+                <AlertTriangle size={48} className="mx-auto text-red-500 mb-4" />
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">Confirm Deletion</h3>
+                <p className="text-gray-600 mb-6">
+                    Are you sure you want to delete admin <span className="font-semibold">{adminName}</span>? This action cannot be undone.
+                </p>
+                <div className="flex justify-center gap-4">
+                    <button onClick={onClose} className="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition">
+                        No, Cancel
+                    </button>
+                    <button onClick={onConfirm} className="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
+                        Yes, Delete
+                    </button>
+                </div>
+            </div>
+        </Modal>
+    );
+};
+
 
 // --- Admin Form Component (for Add/Edit) ---
 const AdminForm = ({ initialData, onSave, onCancel, isEdit = false }) => {
     const [formData, setFormData] = useState(
-        initialData || { firstName: '', lastName: '', email: '', password: '', departmentId: '', phone: '', dob: '', address: '' }
+        initialData || { firstName: '', lastName: '', email: '', password: '', departmentId: '', phone: '', address: '' }
     );
-    const originalData = useMemo(() => initialData || { firstName: '', lastName: '', email: '', password: '', departmentId: '', phone: '', dob: '', address: '' }, [initialData]);
+    const [errors, setErrors] = useState({});
+    const originalData = useMemo(() => initialData || { firstName: '', lastName: '', email: '', password: '', departmentId: '', phone: '', address: '' }, [initialData]);
+
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.firstName.trim()) newErrors.firstName = 'First name is required.';
+        else if (!/^[A-Za-z]{2,}$/.test(formData.firstName)) newErrors.firstName = 'First name must be at least 2 letters.';
+        
+        if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required.';
+        else if (!/^[A-Za-z]{2,}$/.test(formData.lastName)) newErrors.lastName = 'Last name must be at least 2 letters.';
+
+        if (!formData.email.trim()) newErrors.email = 'Email is required.';
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email format.';
+
+        if (!isEdit && (!formData.password || formData.password.length < 8)) newErrors.password = 'Password must be at least 8 characters long.';
+        
+        if (!formData.departmentId.trim()) newErrors.departmentId = 'Department ID is required.';
+        else if (!/^\d+$/.test(formData.departmentId)) newErrors.departmentId = 'Department ID must be a number.';
+
+        if (!formData.phone.trim()) newErrors.phone = 'Phone number is required.';
+        else if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = 'Phone number must be 10 digits.';
+
+        if (!formData.address.trim()) newErrors.address = 'Address is required.';
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
     };
 
-    const handleReset = () => setFormData(originalData);
-    const handleSubmit = (e) => { e.preventDefault(); onSave(formData); };
+    const handleReset = () => {
+        setFormData(originalData);
+        setErrors({});
+    };
+
+    const handleSubmit = (e) => { 
+        e.preventDefault(); 
+        if (validate()) {
+            onSave(formData);
+        }
+    };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-xl font-bold text-center text-gray-800 mb-4">{isEdit ? 'Edit Admin Details' : 'Enter New Admin Details'}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} placeholder={isEdit ? '@Fetched from Database' : 'First Name here...'} />
-                <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} placeholder={isEdit ? '@Fetched from Database' : 'Last Name here...'} />
+                <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name here..." error={errors.firstName} />
+                <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name here..." error={errors.lastName} />
             </div>
-            <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder={isEdit ? '@Fetched from Database' : 'Example@email.com'} />
-            {!isEdit && <InputField label="Password" name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Atleast 8 characters long..." />}
-            <InputField label="Department ID" name="departmentId" value={formData.departmentId} onChange={handleChange} placeholder={isEdit ? '@Fetched from Database' : '20, 30 etc...'} />
-            <InputField label="Phone Number" name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder={isEdit ? '@Fetched from Database' : '9876543210...'} />
-            <InputField label="Date of Birth" name="dob" type="date" value={formData.dob} onChange={handleChange} placeholder="Date here" />
-            <InputField label="Address" name="address" value={formData.address} onChange={handleChange} placeholder="Admin Address here...." />
+            <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Example@email.com" error={errors.email} />
+            {!isEdit && <InputField label="Password" name="password" type="password" value={formData.password} onChange={handleChange} placeholder="Atleast 8 characters long..." error={errors.password} />}
+            <InputField label="Department ID" name="departmentId" value={formData.departmentId} onChange={handleChange} placeholder="20, 30 etc..." error={errors.departmentId} />
+            <InputField label="Phone Number" name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder="9876543210..." error={errors.phone} />
+            <InputField label="Address" name="address" value={formData.address} onChange={handleChange} placeholder="Admin Address here...." error={errors.address} />
             <div className="flex justify-end gap-4 pt-4">
                 <button type="button" onClick={handleReset} className="px-6 py-2 bg-[#0d214f] text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition">Reset</button>
                 <button type="submit" className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition">Save</button>
@@ -83,25 +144,30 @@ const AdminForm = ({ initialData, onSave, onCancel, isEdit = false }) => {
     );
 };
 
-const InputField = ({ label, ...props }) => (
+const InputField = ({ label, error, ...props }) => (
     <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-        <input {...props} className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500" required />
+        <input {...props} className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 transition-colors ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`} />
+        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
 );
 
 // --- Edit Admin ID Prompt Modal ---
 const EditPromptModal = ({ isOpen, onClose, onConfirm }) => {
     const [adminId, setAdminId] = useState('');
+    const [error, setError] = useState('');
     const handleSubmit = () => {
-        if (adminId.trim()) onConfirm(adminId);
-        else alert('Please enter an Admin ID.');
+        if (adminId.trim()) {
+            onConfirm(adminId.toUpperCase());
+        } else {
+            setError('Please enter an Admin ID.');
+        }
     };
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="sm">
             <div className="text-center">
                 <h3 className="text-xl font-bold text-gray-800 mb-4">Edit Admin</h3>
-                <InputField label="Enter Admin ID" value={adminId} onChange={(e) => setAdminId(e.target.value)} placeholder="Enter here ....." />
+                <InputField label="Enter Admin ID" value={adminId} onChange={(e) => { setAdminId(e.target.value); if(error) setError(''); }} placeholder="Enter here ....." error={error} />
                 <button onClick={handleSubmit} className="w-full mt-4 px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition">OK</button>
             </div>
         </Modal>
@@ -116,7 +182,7 @@ const AdminDetails = () => {
     const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
     const handleAddAdmin = (newAdminData) => {
-        const newAdmin = { ...newAdminData, id: `AD${Math.floor(1000000 + Math.random() * 9000000)}` };
+        const newAdmin = { ...newAdminData, id: `AD${Math.floor(100000 + Math.random() * 900000)}` };
         const isSuccess = Math.random() > 0.2; // Simulate success/failure
         if (isSuccess) {
             setAdmins(prev => [newAdmin, ...prev]);
@@ -131,7 +197,6 @@ const AdminDetails = () => {
         if (adminToEdit) {
             setModalState({ type: 'editForm', data: adminToEdit });
         } else {
-            // Show failure pop-up if admin ID is not found
             setModalState({ type: 'status', data: { success: false, title: 'Failed to Find Admin !!', errorCode: 'E404_NOT_FOUND' } });
         }
     };
@@ -141,10 +206,13 @@ const AdminDetails = () => {
         setModalState({ type: null, data: null });
     };
 
-    const handleDelete = (idToDelete) => {
-        if (window.confirm(`Are you sure you want to delete admin with ID: ${idToDelete}?`)) {
-            setAdmins(prev => prev.filter(admin => admin.id !== idToDelete));
-        }
+    const handleDeleteClick = (admin) => {
+        setModalState({ type: 'deleteConfirm', data: admin });
+    };
+
+    const handleConfirmDelete = () => {
+        setAdmins(prev => prev.filter(admin => admin.id !== modalState.data.id));
+        setModalState({ type: null, data: null });
     };
 
     return (
@@ -186,7 +254,7 @@ const AdminDetails = () => {
                                         <td className="p-3 text-gray-700">{admin.departmentId}</td>
                                         <td className="p-3 text-gray-700">{admin.phone}</td>
                                         <td className="p-3 text-center">
-                                            <button onClick={() => handleDelete(admin.id)} className="px-4 py-1 bg-red-600 text-white font-bold rounded-md hover:bg-red-700 transition flex items-center gap-1 mx-auto">
+                                            <button onClick={() => handleDeleteClick(admin)} className="px-4 py-1 bg-red-600 text-white font-bold rounded-md hover:bg-red-700 transition flex items-center gap-1 mx-auto">
                                                 <X size={16} /> Delete
                                             </button>
                                         </td>
@@ -217,6 +285,15 @@ const AdminDetails = () => {
                     isOpen={true} 
                     onClose={() => setModalState({ type: null })} 
                     {...modalState.data} 
+                />
+            )}
+
+            {modalState.type === 'deleteConfirm' && (
+                <DeleteConfirmationModal
+                    isOpen={true}
+                    onClose={() => setModalState({ type: null })}
+                    onConfirm={handleConfirmDelete}
+                    adminName={`${modalState.data.firstName} ${modalState.data.lastName}`}
                 />
             )}
         </div>
