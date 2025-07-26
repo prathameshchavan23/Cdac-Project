@@ -55,8 +55,11 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 # ER Diagram
 <details>
 <summary><strong>Click to see ER Diagram</strong></summary>
+
 <img src="docs/ER-Project.png" alt="Entity-Relationship Diagram" />
+
 </details>
+
 
 # 🚀 Getting Started
 
