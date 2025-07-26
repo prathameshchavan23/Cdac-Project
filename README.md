@@ -52,7 +52,10 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 
 - Real-Time Data: Binance WebSocket API
 # ER Diagram
+<details>
+<summary><strong>Click to Expand API Endpoint List</strong></summary>
 ![Entity-Relationship Diagram](Docs/ER-Project.png)
+</details>
 # 🚀 Getting Started
 
 Follow these instructions to get a local copy up and running for development and testing purposes.
