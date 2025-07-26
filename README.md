@@ -83,7 +83,10 @@ Make sure you have the following installed:
 
 ```bash
 git clone https://github.com/prathameshchavan23/Cdac-Project
-cd [backend-folder-name]
+```
+change folder
+```bash
+cd Backend
 ```
 
 2. Database Configuration:
@@ -109,7 +112,7 @@ The backend server will start on http://localhost:8080.
 1. Navigate to the frontend directory:
 
 ```bash
-cd [frontend-folder-name]
+cd Frontend
 ```
 
 2. Install dependencies:
@@ -124,16 +127,6 @@ npm install
 npm run dev
 ```
 The React application will start on http://localhost:5173 (or another port specified by Vite).
-## Usage
-
-1. On page load, the default candlestick chart for ETH/USDT with a 1-minute interval will be displayed.
-
-2. Use the dropdown menus to select different cryptocurrencies and intervals.
-
-3. The chart will update in real-time with candlestick data for the selected coin.
-
-4. Switch between coins and intervals while maintaining previously fetched data.
-
 
 ## 📋 API Endpoints
 
@@ -143,22 +136,104 @@ A complete list of all available API endpoints is provided below. All administra
 <summary><strong>Click to Expand API Endpoint List</strong></summary>
 
 ### Authentication
-
-| HTTP Method | URL Path                 | Description                                      |
-| :---------- | :----------------------- | :----------------------------------------------- |
-| `POST`      | `/api/auth/register/admin` | (Super Admin Only) Registers a new administrator. |
-| `POST`      | `/api/auth/login`          | Logs in a user and returns a JWT.                |
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/register/admin` | (Super Admin Only) Registers a new administrator. |
+| `POST` | `/api/auth/login` | Logs in a user and returns a JWT. |
 
 ### Admin Management
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/admin/admins` | Gets a list of all administrators. |
+| `GET` | `/api/admin/admins/{id}` | Gets a single administrator. |
+| `PUT` | `/api/admin/admins/{id}` | Updates an administrator. |
+| `DELETE` | `/api/admin/admins/{id}` | Deletes an administrator. |
 
-| HTTP Method | URL Path               | Description                       |
-| :---------- | :--------------------- | :-------------------------------- |
-| `GET`       | `/api/admin/admins`      | Gets a list of all administrators. |
-| `GET`       | `/api/admin/admins/{id}` | Gets a single administrator.      |
-| `PUT`       | `/api/admin/admins/{id}` | Updates an administrator.         |
-| `DELETE`    | `/api/admin/admins/{id}` | Deletes an administrator.         |
+### Department Management
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/departments` | Creates a new department. |
+| `GET` | `/api/departments` | Gets a list of all departments. |
+| `GET` | `/api/departments/{id}` | Gets a single department. |
+| `PUT` | `/api/departments/{id}` | Updates a department. |
+| `DELETE` | `/api/departments/{id}` | Deletes a department. |
 
-*(...and so on for all other features as detailed in the API list previously provided)*
+### Instructor Management
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/admin/instructors` | Creates a new instructor. |
+| `GET` | `/api/admin/instructors` | Gets a paginated list of all instructors. |
+| `GET` | `/api/admin/instructors/{id}` | Gets a single instructor. |
+| `PUT` | `/api/admin/instructors/{id}` | Updates an instructor. |
+| `DELETE` | `/api/admin/instructors/{id}` | Deletes an instructor. |
+
+### Student Management (by Admin)
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/admin/students` | Creates a new student. |
+| `GET` | `/api/admin/students` | Gets a paginated list of all students. |
+| `GET` | `/api/admin/students/{prn}` | Gets a single student. |
+| `PUT` | `/api/admin/students/{prn}` | Updates a student. |
+| `DELETE` | `/api/admin/students/{prn}` | Deletes a student. |
+
+### Module Management
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/admin/modules` | Creates a new module. |
+| `GET` | `/api/admin/modules` | Gets a paginated list of all modules. |
+| `GET` | `/api/admin/modules/{moduleId}` | Gets a single module. |
+| `PUT` | `/api/admin/modules/{moduleId}` | Updates a module. |
+| `DELETE` | `/api/admin/modules/{moduleId}` | Deletes a module. |
+
+### Timetable Management
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/admin/timetable` | Creates a new timetable entry. |
+| `GET` | `/api/admin/timetable` | Gets all timetable entries. |
+
+### Grades Management
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/admin/exams` | Creates a new exam. |
+| `GET` | `/api/admin/exams` | Gets all exams. |
+| `POST` | `/api/admin/scores/bulk` | Records or updates marks for multiple students. |
+| `GET` | `/api/admin/scores/exam/{examId}` | Gets all scores for a specific exam. |
+| `GET` | `/api/admin/scores/exam/{examId}/marks-sheet`| Gets a paginated marks entry sheet. |
+
+### Attendance Management
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/admin/attendance` | Marks attendance for a single student. |
+| `POST` | `/api/admin/attendance/bulk`| Marks or updates attendance for multiple students. |
+| `PUT` | `/api/admin/attendance/{id}`| Updates a single attendance record. |
+| `DELETE` | `/api/admin/attendance/{id}`| Deletes a single attendance record. |
+| `GET` | `/api/admin/attendance/session/{id}` | Gets paginated attendance for a class session. |
+| `GET` | `/api/admin/attendance/session/{id}/by-date`| Gets paginated attendance on a specific date. |
+
+### Feedback
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/student/feedback/submit` | (Student) Submits feedback. |
+| `GET` | `/api/student/feedback/sessions/active`| (Student) Gets active feedback sessions. |
+| `POST` | `/api/admin/feedback/sessions` | (Admin) Creates a new feedback session. |
+| `GET` | `/api/admin/feedback/instructors`| (Admin) Gets instructors with feedback status. |
+| `GET` | `/api/admin/feedback/sessions/{id}/stats`| (Admin) Gets statistics for a feedback session. |
+| `GET` | `/api/admin/feedback/sessions/{id}/anonymous`| (Admin) Gets anonymous feedback for a session. |
+| `DELETE`| `/api/admin/feedback/{feedbackId}`| (Admin) Deletes a feedback record. |
+
+### Student Endpoints
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/student/dashboard/stats` | Gets dashboard statistics. |
+| `GET` | `/api/student/dashboard/todays-classes`| Gets today's class schedule. |
+| `GET` | `/api/student/profile` | Gets the student's profile details. |
+| `GET` | `/api/student/my-marks` | Gets a list of all marks. |
+
+### Monitoring (Actuator)
+| HTTP Method | URL Path | Description |
+| :--- | :--- | :--- |
+| `GET` | `/actuator/health` | Shows the application's health status. |
+| `GET` | `/actuator/info` | Shows custom application info. |
 
 </details>
 
@@ -167,26 +242,6 @@ A complete list of all available API endpoints is provided below. All administra
 1.  **Run the Backend and Frontend** servers.
 2.  The application requires at least one **Super Admin** to function. Use the dummy data SQL script or register the first Super Admin manually.
 3.  Log in as the Super Admin to access the administrative dashboard and start managing the system.
-
-
-
-
-
-
-
-## Future Enhancements
-
-
-- Add more cryptocurrency pairs to the toggle menu.
-Implement local storage for data persistence between sessions.
-
-- Add more chart customization options (colors, time frames, etc.).
-
-- Add historical data fetching to load charts with a complete data range on page load.
-
-
-
-
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
