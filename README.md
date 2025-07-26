@@ -48,9 +48,18 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 
 - Backend: Node.js with WebSocket for server-side data processing
 
-- Frontend: HTML5, CSS3, JavaScript (with Chart.js for rendering charts)
+- Frontend: HTML5, CSS3, JavaScript
 
 - Real-Time Data: Binance WebSocket API
+- 
+# ER Diagram
+<details>
+<summary><strong>Click to see ER Diagram</strong></summary>
+
+<img src="docs/ER-Project.png" alt="Entity-Relationship Diagram" />
+
+</details>
+
 
 # 🚀 Getting Started
 
@@ -86,7 +95,7 @@ git clone https://github.com/prathameshchavan23/Cdac-Project
 ```
 change folder
 ```bash
-cd Backend
+cd backend
 ```
 
 2. Database Configuration:
@@ -112,7 +121,7 @@ The backend server will start on http://localhost:8080.
 1. Navigate to the frontend directory:
 
 ```bash
-cd Frontend
+cd frontend
 ```
 
 2. Install dependencies:
