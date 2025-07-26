@@ -22,6 +22,7 @@ const adminLinks = [
 const userLinks = [
   { name: "Dashboard", path: "/user/dashboard", icon: "dashboard" },
   { name: "Profile", path: "/user/profile", icon: "person" },
+    { name: "Marks", path: "/user/marks", icon: "grading" },
   { name: "Attendance", path: "/user/attendance", icon: "checklist_rtl" },
   { name: "TimeTable", path: "/user/timetable", icon: "calendar_today" },
   {

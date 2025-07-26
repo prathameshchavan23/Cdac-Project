@@ -28,6 +28,7 @@ import LostandFound from "./pages/Admin/LostandFound";
 import TheoryFeedback from "./pages/User/TheoryFeedback";
 import LabFeedback from "./pages/User/LabFeedback";
 import Profile from "./pages/User/Profile";
+import StudentMarksViewer from "./pages/User/StudentMarksViewer";
 
 function App() {
   const dispatch = useDispatch();
@@ -66,6 +67,7 @@ function App() {
           <Route path="dashboard" element={<UserDashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="attendance" element={<UserAttendance />} />
+          <Route path="marks" element={<StudentMarksViewer />} />
           <Route path="timetable" element={<UserTimeTable />} />
           <Route index element={<TheoryFeedback />} />
           <Route path="feedback/theory" element={<TheoryFeedback />} />

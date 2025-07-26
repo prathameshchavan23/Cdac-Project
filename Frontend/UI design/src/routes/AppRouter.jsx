@@ -25,6 +25,7 @@ import LostandFound from "../pages/Admin/LostandFound";
 import TheoryFeedbackPage from "../pages/User/TheoryFeedback";
 import LabFeedback from "../pages/User/LabFeedback";
 import Profile from "../pages/User/Profile";
+import StudentMarksViewer from "../pages/User/StudentMarksViewer";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +72,8 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to="dashboard" replace /> },
           { path: "dashboard", element: <StudentDashboard /> },
+          { path: "profile", element: <Profile /> },
+          { path: "profile", element: <StudentMarksViewer /> },
           { path: "attendance", element: <StudentAttendance /> },
           {
             path: "feedback",
@@ -82,7 +85,6 @@ const router = createBrowserRouter([
             ],
           },
           { path: "timetable", element: <StudentTimeTable /> },
-          { path: "profile", element: <Profile /> },
         ],
       },
     ],
