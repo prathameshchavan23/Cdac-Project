@@ -48,12 +48,12 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 
 - Backend: Node.js with WebSocket for server-side data processing
 
-- Frontend: HTML5, CSS3, JavaScript (with Chart.js for rendering charts)
+- Frontend: HTML5, CSS3, JavaScript
 
 - Real-Time Data: Binance WebSocket API
 # ER Diagram
 <details>
-<summary><strong>Click to Expand API Endpoint List</strong></summary>
+<summary><strong>Click to see ER Diagram</strong></summary>
 ![Entity-Relationship Diagram](Docs/ER-Project.png)
 </details>
 # 🚀 Getting Started
