@@ -51,7 +51,7 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 - Frontend: HTML5, CSS3, JavaScript
 
 - Real-Time Data: Binance WebSocket API
-- 
+  
 # ER Diagram
 <details>
 <summary><strong>Click to see ER Diagram</strong></summary>
