@@ -158,7 +158,7 @@ A complete list of all available API endpoints is provided below. All administra
 | `PUT`       | `/api/admin/admins/{id}` | Updates an administrator.         |
 | `DELETE`    | `/api/admin/admins/{id}` | Deletes an administrator.         |
 
-*(...and so on for all other features as detailed in the API list previously provided)*
+*(...and so on..........)*
 
 </details>
 
