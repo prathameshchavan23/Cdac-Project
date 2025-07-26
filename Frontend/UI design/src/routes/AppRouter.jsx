@@ -22,6 +22,9 @@ import AdminStudents from "../pages/Admin/StudentsEditPage";
 import AdminDetails from "../pages/Admin/AdminDetails";
 import ModulesPage from "../pages/Admin/ModulesPage";
 import LostandFound from "../pages/Admin/LostandFound";
+import TheoryFeedbackPage from "../pages/User/TheoryFeedback";
+import LabFeedback from "../pages/User/LabFeedback";
+import Profile from "../pages/User/Profile";
 
 const router = createBrowserRouter([
   {
@@ -69,9 +72,17 @@ const router = createBrowserRouter([
           { index: true, element: <Navigate to="dashboard" replace /> },
           { path: "dashboard", element: <StudentDashboard /> },
           { path: "attendance", element: <StudentAttendance /> },
-          { path: "feedback", element: <StudentFeedback /> },
+          {
+            path: "feedback",
+            element: <StudentFeedback />,
+            children: [
+              { index: true, element: <Navigate to="theory" replace /> },
+              { path: "theory", element: <TheoryFeedbackPage /> },
+              { path: "lab", element: <LabFeedback /> },
+            ],
+          },
           { path: "timetable", element: <StudentTimeTable /> },
-          { path: "profile", element: <StudentProfile /> },
+          { path: "profile", element: <Profile /> },
         ],
       },
     ],

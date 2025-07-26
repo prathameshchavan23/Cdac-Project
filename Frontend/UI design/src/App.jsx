@@ -23,10 +23,11 @@ import ModulesPage from "./pages/Admin/ModulesPage";
 // Student layout + pages
 import UserDashboard from "./pages/User/Dashboard";
 import UserAttendance from "./pages/User/Attendance";
-import UserFeedback from "./pages/User/Feedback";
 import UserTimeTable from "./pages/User/Timetable";
-import UserProfile from "./pages/User/Profile";
 import LostandFound from "./pages/Admin/LostandFound";
+import TheoryFeedback from "./pages/User/TheoryFeedback";
+import LabFeedback from "./pages/User/LabFeedback";
+import Profile from "./pages/User/Profile";
 
 function App() {
   const dispatch = useDispatch();
@@ -63,10 +64,12 @@ function App() {
         {/* All routes starting with "/user" will also render inside the AppLayout. */}
         <Route path="/user" element={<AppLayout role="student" />}>
           <Route path="dashboard" element={<UserDashboard />} />
-          <Route path="profile" element={<UserProfile />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="attendance" element={<UserAttendance />} />
           <Route path="timetable" element={<UserTimeTable />} />
-          <Route path="feedback" element={<UserFeedback />} />
+          <Route index element={<TheoryFeedback />} />
+          <Route path="feedback/theory" element={<TheoryFeedback />} />
+          <Route path="feedback/lab" element={<LabFeedback />} />
         </Route>
 
         {/* A "catch-all" route that matches any URL not defined above.

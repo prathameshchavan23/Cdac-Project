@@ -8,14 +8,14 @@ import cdac_logo from "../assets/cdac_logo.png";
 
 const adminLinks = [
   { name: "Dashboard", path: "/staff/dashboard", icon: "dashboard" },
-  { name: "Marks", path: "/staff/marks", icon: "assignment" }, 
+  { name: "Marks", path: "/staff/marks", icon: "assignment" },
   { name: "Students", path: "/staff/students", icon: "group" },
   { name: "Attendance", path: "/staff/attendance", icon: "checklist_rtl" },
   { name: "TimeTable", path: "/staff/timetable", icon: "calendar_today" },
   { name: "Instructor", path: "/staff/instructor", icon: "person" },
   { name: "Feedback", path: "/staff/feedback", icon: "feedback" },
   { name: "Admin Details", path: "/staff/admindetails", icon: "edit" },
-   { name: "Module", path: "/staff/module", icon: "add" },
+  { name: "Module", path: "/staff/module", icon: "add" },
   { name: "Lost and Found", path: "/staff/lost-and-found", icon: "search" },
 ];
 
@@ -24,8 +24,15 @@ const userLinks = [
   { name: "Profile", path: "/user/profile", icon: "person" },
   { name: "Attendance", path: "/user/attendance", icon: "checklist_rtl" },
   { name: "TimeTable", path: "/user/timetable", icon: "calendar_today" },
-  // Simplified to a direct link for better user experience
-  { name: "Feedback", path: "/user/feedback", icon: "feedback" },
+  {
+    name: "Feedback",
+    path: "/user/feedback",
+    icon: "feedback",
+    submenu: [
+      { name: "Theory Feedback", path: "/user/feedback/theory" },
+      { name: "Lab Feedback", path: "/user/feedback/lab" },
+    ],
+  },
 ];
 
 const Sidebar = ({ role }) => {
