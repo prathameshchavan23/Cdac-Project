@@ -168,26 +168,6 @@ A complete list of all available API endpoints is provided below. All administra
 2.  The application requires at least one **Super Admin** to function. Use the dummy data SQL script or register the first Super Admin manually.
 3.  Log in as the Super Admin to access the administrative dashboard and start managing the system.
 
-
-
-
-
-
-
-## Future Enhancements
-
-
-- Add more cryptocurrency pairs to the toggle menu.
-Implement local storage for data persistence between sessions.
-
-- Add more chart customization options (colors, time frames, etc.).
-
-- Add historical data fetching to load charts with a complete data range on page load.
-
-
-
-
-
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
