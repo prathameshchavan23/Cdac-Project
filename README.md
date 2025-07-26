@@ -83,7 +83,7 @@ Make sure you have the following installed:
 
 ```bash
 git clone https://github.com/prathameshchavan23/Cdac-Project
-cd [backend-folder-name]
+cd Backend
 ```
 
 2. Database Configuration:
@@ -109,7 +109,7 @@ The backend server will start on http://localhost:8080.
 1. Navigate to the frontend directory:
 
 ```bash
-cd [frontend-folder-name]
+cd Frontend
 ```
 
 2. Install dependencies:
