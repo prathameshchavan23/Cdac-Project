@@ -83,6 +83,9 @@ Make sure you have the following installed:
 
 ```bash
 git clone https://github.com/prathameshchavan23/Cdac-Project
+```
+change folder
+```bash
 cd Backend
 ```
 
@@ -124,16 +127,6 @@ npm install
 npm run dev
 ```
 The React application will start on http://localhost:5173 (or another port specified by Vite).
-## Usage
-
-1. On page load, the default candlestick chart for ETH/USDT with a 1-minute interval will be displayed.
-
-2. Use the dropdown menus to select different cryptocurrencies and intervals.
-
-3. The chart will update in real-time with candlestick data for the selected coin.
-
-4. Switch between coins and intervals while maintaining previously fetched data.
-
 
 ## 📋 API Endpoints
 
