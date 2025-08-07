@@ -15,6 +15,8 @@ import AdminStudents from "./pages/Admin/StudentsEditPage";
 import AdminTimetable from "./pages/Admin/TimeTable";
 import AdminAttendance from "./pages/Admin/Attendance";
 import FeedbackForm from "./pages/Admin/Feedback";
+import FeedbackDashboard from "./pages/Admin/FeedbackDashboard"
+import FeedbackReports from "./pages/Admin/FeedbackReports"
 import NotFoundPage from "./pages/NotFoundPage";
 import InstructorDetails from "./pages/Admin/InstructorDetails";
 import AdminDetails from "./pages/Admin/AdminDetails";
@@ -25,10 +27,9 @@ import UserDashboard from "./pages/User/Dashboard";
 import UserAttendance from "./pages/User/Attendance";
 import UserTimeTable from "./pages/User/Timetable";
 import LostandFound from "./pages/Admin/LostandFound";
-import TheoryFeedback from "./pages/User/TheoryFeedback";
-import LabFeedback from "./pages/User/LabFeedback";
 import Profile from "./pages/User/Profile";
 import StudentMarksViewer from "./pages/User/StudentMarksViewer";
+import Feedback from "./pages/User/Feedback";
 
 function App() {
   const dispatch = useDispatch();
@@ -38,7 +39,6 @@ function App() {
   }, [dispatch]);
 
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         {/* A dedicated route for the LoginPage. */}
@@ -56,6 +56,8 @@ function App() {
           <Route path="timetable" element={<AdminTimetable />} />
           <Route path="instructor" element={<InstructorDetails />} />
           <Route path="feedback" element={<FeedbackForm />} />
+          <Route path="feedback/dashboard/:sessionId" element={<FeedbackDashboard />} />
+          <Route path="feedback/reports/:sessionId" element={<FeedbackReports />} />
           <Route path="admindetails" element={<AdminDetails />} />
           <Route path="module" element={<ModulesPage />} />
           <Route path="/staff/lost-and-found" element={<LostandFound />} />
@@ -69,9 +71,7 @@ function App() {
           <Route path="attendance" element={<UserAttendance />} />
           <Route path="marks" element={<StudentMarksViewer />} />
           <Route path="timetable" element={<UserTimeTable />} />
-          <Route index element={<TheoryFeedback />} />
-          <Route path="feedback/theory" element={<TheoryFeedback />} />
-          <Route path="feedback/lab" element={<LabFeedback />} />
+          <Route path="feedback" element={<Feedback />} />
         </Route>
 
         {/* A "catch-all" route that matches any URL not defined above.
@@ -79,7 +79,6 @@ function App() {
         */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </BrowserRouter>
   );
 }
 

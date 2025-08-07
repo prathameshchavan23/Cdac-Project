@@ -63,7 +63,7 @@ public class AttendanceServiceImpl implements IAttendanceService {
             attendance.setStudent(student);
             attendance.setTimetableEntry(timetableEntry);
             attendance.setAttendanceDate(request.getAttendanceDate());
-            attendance.setPresent(studentAttendance.getPresent());
+            attendance.setPresent(studentAttendance.getIsPresent());
 
             attendanceRepository.save(attendance);
         }

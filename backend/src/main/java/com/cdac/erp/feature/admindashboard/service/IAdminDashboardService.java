@@ -7,9 +7,10 @@ import com.cdac.erp.feature.admindashboard.dto.AdminDashboardStatsDto;
  */
 public interface IAdminDashboardService {
 
-    /**
-     * Retrieves key statistics for the admin dashboard.
-     * @return A DTO containing counts of total students, instructors, and modules.
-     */
-    AdminDashboardStatsDto getDashboardStats();
+	/**
+	 * Retrieves key statistics for the admin dashboard.
+	 * 
+	 * @return A DTO containing counts of total students, instructors, and modules.
+	 */
+	AdminDashboardStatsDto getDashboardStats();
 }

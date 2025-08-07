@@ -1,6 +1,6 @@
 package com.cdac.erp.feature.module.controller;
 
-import com.cdac.erp.core.model.Module;
+import com.cdac.erp.core.model.CourseModule;
 import jakarta.validation.Valid;
 import com.cdac.erp.feature.module.dto.ModuleCreateRequest;
 import com.cdac.erp.feature.module.dto.ModuleResponse;

@@ -16,9 +16,9 @@ public interface IStudentFeedbackService {
      */
     void submitFeedback(String studentPrn, FeedbackRequest request);
 
-    /**
-     * Retrieves a list of all currently active feedback sessions available for students.
-     * @return A list of active feedback sessions.
-     */
-    List<ActiveSessionResponse> getActiveFeedbackSessions();
+//    /**
+//     * Retrieves a list of all currently active feedback sessions available for students.
+//     * @return A list of active feedback sessions.
+//     */
+//    List<ActiveSessionResponse> getActiveFeedbackSessions();
 }

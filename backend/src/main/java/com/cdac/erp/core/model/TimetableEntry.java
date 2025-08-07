@@ -29,7 +29,7 @@ public class TimetableEntry {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "module_id", nullable = false)
-    private Module module;
+    private CourseModule module; // Assuming you have renamed Module to CourseModule
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id", nullable = false)
@@ -51,7 +51,7 @@ public class TimetableEntry {
     private String roomNumber;
 
     @Column(name = "is_lab")
-    private boolean isLab;
+    private Boolean isLab; // Changed from primitive 'boolean' to wrapper 'Boolean'
 
     @Column(name = "break_start")
     private LocalTime breakStart;

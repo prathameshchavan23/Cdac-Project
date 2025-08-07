@@ -29,9 +29,9 @@ public class StudentFeedbackController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/sessions/active")
-    public ResponseEntity<List<ActiveSessionResponse>> getActiveSessions(Authentication authentication) {
-        List<ActiveSessionResponse> sessions = studentFeedbackService.getActiveFeedbackSessions();
-        return ResponseEntity.ok(sessions);
-    }
+//    @GetMapping("/sessions/active")
+//    public ResponseEntity<List<ActiveSessionResponse>> getActiveSessions(Authentication authentication) {
+//        List<ActiveSessionResponse> sessions = studentFeedbackService.getActiveFeedbackSessions();
+//        return ResponseEntity.ok(sessions);
+//    }
 }

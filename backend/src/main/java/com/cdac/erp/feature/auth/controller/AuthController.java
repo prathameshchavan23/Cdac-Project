@@ -20,12 +20,13 @@ public class AuthController {
 
     @Autowired
     private IAuthService authService;
-
-    @PostMapping("/register/admin")
-    public ResponseEntity<AdminResponse> registerAdmin(@Valid @RequestBody AdminRegisterRequest registerRequest) {
-        AdminResponse createdAdmin = authService.registerAdmin(registerRequest);
-        return new ResponseEntity<>(createdAdmin, HttpStatus.CREATED);
-    }
+    //this is public endpoint in case we want to register the admin first time 
+    
+//    @PostMapping("/register/admin")
+//    public ResponseEntity<AdminResponse> registerAdmin(@Valid @RequestBody AdminRegisterRequest registerRequest) {
+//        AdminResponse createdAdmin = authService.registerAdmin(registerRequest);
+//        return new ResponseEntity<>(createdAdmin, HttpStatus.CREATED);
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {

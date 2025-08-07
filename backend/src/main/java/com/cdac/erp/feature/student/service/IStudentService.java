@@ -1,6 +1,7 @@
 package com.cdac.erp.feature.student.service;
 
 import com.cdac.erp.feature.grades.dto.ScoreResponse;
+//import com.cdac.erp.feature.student.dto.StudentAttendanceSummaryDto;
 import com.cdac.erp.feature.student.dto.StudentCreateRequest;
 import com.cdac.erp.feature.student.dto.StudentResponse;
 import com.cdac.erp.feature.student.dto.StudentUpdateRequest;
@@ -63,4 +64,13 @@ public interface IStudentService {
      * @return A list of DTOs representing pending feedback sessions.
      */
     List<ActiveSessionResponse> getPendingFeedbackTasks(String studentPrn);
+//    
+//    /**
+//     * Retrieves a summary of attendance for the student, aggregated by module.
+//     * @param studentPrn The PRN of the student.
+//     * @return A list of DTOs, each representing the attendance summary for one module.
+//     */
+//    List<StudentAttendanceSummaryDto> getAttendanceSummary(String studentPrn);
+    
+    Page<StudentResponse> getStudentsByModule(String moduleId, Pageable pageable); 
 }

@@ -3,10 +3,10 @@ package com.cdac.erp.feature.module.service;
 import com.cdac.erp.common.exception.ConflictException;
 import com.cdac.erp.common.exception.ResourceNotFoundException;
 import com.cdac.erp.core.model.Department;
-import com.cdac.erp.core.model.Module;
+import com.cdac.erp.core.model.CourseModule;
 import com.cdac.erp.core.repository.DepartmentRepository;
 import com.cdac.erp.core.repository.ExamRepository;
-import com.cdac.erp.core.repository.ModuleRepository;
+import com.cdac.erp.core.repository.CourseModuleRepository;
 import com.cdac.erp.core.repository.TimetableEntryRepository;
 import com.cdac.erp.feature.module.dto.ModuleCreateRequest;
 import com.cdac.erp.feature.module.dto.ModuleResponse;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 public class ModuleServiceImpl implements IModuleService {
 
 	@Autowired
-	private ModuleRepository moduleRepository;
+	private CourseModuleRepository moduleRepository;
 
 	@Autowired
 	private DepartmentRepository departmentRepository;
@@ -44,12 +44,12 @@ public class ModuleServiceImpl implements IModuleService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Department not found with id: " + createRequest.getDepartmentId()));
 
-        Module module = new Module();
+        CourseModule module = new CourseModule();
         module.setModuleId(createRequest.getModuleId());
         module.setModuleName(createRequest.getModuleName());
         module.setDepartment(department);
 
-        Module savedModule = moduleRepository.save(module);
+        CourseModule savedModule = moduleRepository.save(module);
 
         // Convert the saved entity to a DTO before returning
         return convertToDto(savedModule);
@@ -62,13 +62,13 @@ public class ModuleServiceImpl implements IModuleService {
 	
 	@Override
     public Page<ModuleResponse> getAllModules(Pageable pageable) {
-        Page<Module> modulePage = moduleRepository.findAll(pageable);
+        Page<CourseModule> modulePage = moduleRepository.findAll(pageable);
         return modulePage.map(this::convertToDto);
     }
 
 	@Override
 	public ModuleResponse getModuleById(String moduleId) {
-		Module module = moduleRepository.findById(moduleId)
+		CourseModule module = moduleRepository.findById(moduleId)
 				.orElseThrow(() -> new ResourceNotFoundException("Module not found with id: " + moduleId));
 
 		return convertToDto(module);
@@ -77,7 +77,7 @@ public class ModuleServiceImpl implements IModuleService {
 	@Override
     @Transactional
     public ModuleResponse updateModule(String moduleId, ModuleUpdateRequest request) {
-        Module existingModule = moduleRepository.findById(moduleId)
+        CourseModule existingModule = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Module not found with id: " + moduleId));
         
         Department department = departmentRepository.findById(request.getDepartmentId())
@@ -86,7 +86,7 @@ public class ModuleServiceImpl implements IModuleService {
         existingModule.setModuleName(request.getModuleName());
         existingModule.setDepartment(department);
 
-        Module updatedModule = moduleRepository.save(existingModule);
+        CourseModule updatedModule = moduleRepository.save(existingModule);
         return convertToDto(updatedModule);
     }
 
@@ -109,7 +109,7 @@ public class ModuleServiceImpl implements IModuleService {
         moduleRepository.deleteById(moduleId);
     }
 
-	private ModuleResponse convertToDto(Module module) {
+	private ModuleResponse convertToDto(CourseModule module) {
 		ModuleResponse dto = new ModuleResponse();
 		dto.setModuleId(module.getModuleId());
 		dto.setModuleName(module.getModuleName());

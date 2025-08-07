@@ -1,41 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Globe, UserCheck, BookOpen, Hash, Edit } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Globe, UserCheck, BookOpen, Hash, Edit } from 'lucide-react';// --- CHANGE: Import our new service function ---
+import { getMyProfile } from '../../services/profileService';
 
-// --- Mock Data (Simulates a backend API response) ---
-const mockStudentData = {
-    name: "Rohan Sharma",
-    course: "PG-DAC (Post Graduate Diploma in Advanced Computing)",
-    year: "2024",
-    prn: "240340120011",
-    profileImageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=128&h=128&fit=crop&crop=faces",
-    personal: {
-        firstName: "Rohan",
-        lastName: "Sharma",
-        gender: "Male",
-        dateOfBirth: "15 May, 2002",
-        country: "India",
-        region: "Maharashtra",
-    },
-    contact: {
-        email: "rohan.sharma@example.com",
-        mobile: "+91 98765 43210",
-        alternateMobile: "+91 98765 43211",
-        postalAddress: {
-            line1: "123 Pine Street, Apt 4B",
-            line2: "Andheri West",
-            line3: "Mumbai, 400058",
-        },
-    },
-};
-
-// --- Reusable Profile Detail Component ---
+// --- Reusable Profile Detail Component (No changes needed here) ---
 const DetailItem = ({ icon, label, value }) => (
     <div>
         <div className="flex items-center text-sm text-gray-500 mb-1">
             {icon}
             <span className="ml-2">{label}</span>
         </div>
-        <p className="text-base font-semibold text-gray-800">{value}</p>
+        <p className="text-base font-semibold text-gray-800">{value || 'N/A'}</p>
     </div>
 );
 
@@ -45,20 +19,18 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Simulate fetching data from a backend
-    const fetchStudentData = () => {
+    // --- CHANGE: This function now calls our real backend API ---
+    const fetchStudentData = async () => {
         setLoading(true);
         setError(null);
-        setTimeout(() => {
-            // Simulate a successful fetch
-            if (Math.random() > 0.1) { // 90% chance of success
-                setStudentData(mockStudentData);
-            } else {
-                // Simulate a fetch error
-                setError("Failed to fetch student data. Please try again.");
-            }
+        try {
+            const data = await getMyProfile();
+            setStudentData(data);
+        } catch (err) {
+            setError("Failed to fetch student data. Please try again.");
+        } finally {
             setLoading(false);
-        }, 1500);
+        }
     };
 
     useEffect(() => {
@@ -71,7 +43,7 @@ const Profile = () => {
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-blue-600 mx-auto"></div>
                     <h2 className="text-2xl font-semibold text-gray-700 mt-4">Loading Profile...</h2>
-                    <p className="text-gray-500">Please wait while we fetch the student details.</p>
+                    <p className="text-gray-500">Please wait while we fetch your details.</p>
                 </div>
             </div>
         );
@@ -95,10 +67,10 @@ const Profile = () => {
     }
     
     if (!studentData) {
-        return null; // Should not happen if loading and error are handled, but good practice
+        return null;
     }
 
-
+    // --- CHANGE: The JSX below now uses fields from our StudentResponse DTO ---
     return (
         <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
             <div className="max-w-5xl mx-auto">
@@ -108,18 +80,15 @@ const Profile = () => {
                     <div className="relative px-8 pb-8">
                         <div className="flex flex-col sm:flex-row items-center sm:items-end -mt-20 sm:-mt-16 mb-6">
                             <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-200 flex-shrink-0">
-                                <img
-                                    src={studentData.profileImageUrl}
-                                    alt="Student Profile"
-                                    className="w-full h-full object-cover"
-                                />
+                                {/* Placeholder image as we don't have one from the backend */}
+                                <User className="w-full h-full text-gray-400 p-4" />
                             </div>
                             <div className="sm:ml-6 mt-4 sm:mt-0 text-center sm:text-left flex-grow">
                                 <h2 className="text-3xl font-bold text-gray-800">
-                                    {studentData.name}
+                                    {studentData.firstName} {studentData.lastName}
                                 </h2>
                                 <p className="text-gray-600 text-sm font-medium mt-1">
-                                    {studentData.course}
+                                    {studentData.departmentName}
                                 </p>
                             </div>
                             <button className="mt-4 sm:mt-0 px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-sm hover:bg-gray-200 transition flex items-center gap-2">
@@ -127,7 +96,7 @@ const Profile = () => {
                             </button>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center border-t border-gray-200 pt-6">
-                            <DetailItem icon={<BookOpen size={16} className="text-gray-400"/>} label="Current Year" value={studentData.year} />
+                            <DetailItem icon={<BookOpen size={16} className="text-gray-400"/>} label="Department" value={studentData.departmentName} />
                             <DetailItem icon={<Hash size={16} className="text-gray-400"/>} label="PRN Number" value={studentData.prn} />
                             <DetailItem icon={<UserCheck size={16} className="text-gray-400"/>} label="Status" value="Active" />
                         </div>
@@ -142,12 +111,9 @@ const Profile = () => {
                             <h3 className="text-xl font-semibold text-gray-800">Personal Details</h3>
                         </div>
                         <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-8">
-                            <DetailItem icon={<User size={16} className="text-gray-400"/>} label="First Name" value={studentData.personal.firstName} />
-                            <DetailItem icon={<User size={16} className="text-gray-400"/>} label="Last Name" value={studentData.personal.lastName} />
-                            <DetailItem icon={<UserCheck size={16} className="text-gray-400"/>} label="Gender" value={studentData.personal.gender} />
-                            <DetailItem icon={<Calendar size={16} className="text-gray-400"/>} label="Date of Birth" value={studentData.personal.dateOfBirth} />
-                            <DetailItem icon={<Globe size={16} className="text-gray-400"/>} label="Country" value={studentData.personal.country} />
-                            <DetailItem icon={<MapPin size={16} className="text-gray-400"/>} label="Region" value={studentData.personal.region} />
+                            <DetailItem icon={<User size={16} className="text-gray-400"/>} label="First Name" value={studentData.firstName} />
+                            <DetailItem icon={<User size={16} className="text-gray-400"/>} label="Last Name" value={studentData.lastName} />
+                            <DetailItem icon={<Calendar size={16} className="text-gray-400"/>} label="Date of Birth" value={studentData.dateOfBirth} />
                         </div>
                     </div>
 
@@ -157,20 +123,9 @@ const Profile = () => {
                             <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
                         </div>
                         <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-8">
-                            <DetailItem icon={<Mail size={16} className="text-gray-400"/>} label="Email Address" value={studentData.contact.email} />
-                            <DetailItem icon={<Phone size={16} className="text-gray-400"/>} label="Mobile Number" value={studentData.contact.mobile} />
-                            <DetailItem icon={<Phone size={16} className="text-gray-400"/>} label="Alternate Mobile" value={studentData.contact.alternateMobile} />
-                            <div>
-                                <div className="flex items-center text-sm text-gray-500 mb-1">
-                                    <MapPin size={16} className="text-gray-400"/>
-                                    <span className="ml-2">Postal Address</span>
-                                </div>
-                                <div className="text-base font-semibold text-gray-800 space-y-1">
-                                    <p>{studentData.contact.postalAddress.line1}</p>
-                                    <p>{studentData.contact.postalAddress.line2}</p>
-                                    <p>{studentData.contact.postalAddress.line3}</p>
-                                </div>
-                            </div>
+                            <DetailItem icon={<Mail size={16} className="text-gray-400"/>} label="Email Address" value={studentData.email} />
+                            <DetailItem icon={<Phone size={16} className="text-gray-400"/>} label="Mobile Number" value={studentData.phoneNumber} />
+                            <DetailItem icon={<MapPin size={16} className="text-gray-400"/>} label="Postal Address" value={studentData.address} />
                         </div>
                     </div>
                 </div>

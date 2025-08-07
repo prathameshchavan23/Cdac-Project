@@ -2,9 +2,9 @@ package com.cdac.erp.feature.grades.service;
 
 import com.cdac.erp.common.exception.ResourceNotFoundException;
 import com.cdac.erp.core.model.Exam;
-import com.cdac.erp.core.model.Module;
+import com.cdac.erp.core.model.CourseModule;
 import com.cdac.erp.core.repository.ExamRepository;
-import com.cdac.erp.core.repository.ModuleRepository;
+import com.cdac.erp.core.repository.CourseModuleRepository;
 import com.cdac.erp.feature.grades.dto.ExamRequest;
 import com.cdac.erp.feature.grades.dto.ExamResponse;
 import java.util.List;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 public class ExamServiceImpl implements IExamService {
 
     @Autowired private ExamRepository examRepository;
-    @Autowired private ModuleRepository moduleRepository;
+    @Autowired private CourseModuleRepository moduleRepository;
 
     @Override
     public ExamResponse createExam(ExamRequest request) {
-        Module module = moduleRepository.findById(request.getModuleId())
+        CourseModule module = moduleRepository.findById(request.getModuleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Module not found with id: " + request.getModuleId()));
 
         Exam exam = new Exam();
@@ -47,5 +47,12 @@ public class ExamServiceImpl implements IExamService {
             dto.setModuleName(exam.getModule().getModuleName());
         }
         return dto;
+    }
+    
+    @Override
+    public List<ExamResponse> getExamsByModule(String moduleId) {
+        return examRepository.findByModule_ModuleId(moduleId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }

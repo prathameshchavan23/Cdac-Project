@@ -21,4 +21,8 @@ public interface IExamService {
      * @return A list of DTOs representing all exams.
      */
     List<ExamResponse> getAllExams();
+    
+    List<ExamResponse> getExamsByModule(String moduleId);
+    
+    
 }

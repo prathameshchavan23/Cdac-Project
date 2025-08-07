@@ -52,7 +52,8 @@ public class AuthServiceImpl implements IAuthService {
 						"Department not found with id: " + registerRequest.getDepartmentId()));
 
 		Admin admin = new Admin();
-		// ... set all fields from the request
+		
+		// set all fields from the request
 		admin.setFirstName(registerRequest.getFirstName());
 		admin.setLastName(registerRequest.getLastName());
 		admin.setEmail(registerRequest.getEmail());
@@ -73,31 +74,42 @@ public class AuthServiceImpl implements IAuthService {
 
 	@Override
 	public AuthResponse login(LoginRequest loginRequest) {
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		
+		//will call CustomUserDetailsService here
+	    Authentication authentication = authenticationManager.authenticate(
+	            new UsernamePasswordAuthenticationToken(
+	                    loginRequest.getUsername(),
+	                    loginRequest.getPassword()
+	            )
+	    );
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = tokenProvider.generateToken(authentication);
+	    SecurityContextHolder.getContext().setAuthentication(authentication);
+	    
+	    String jwt = tokenProvider.generateToken(authentication);
 
-		String username = authentication.getName();
-		String role = authentication.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority)
-				.orElse("");
+	    String username = authentication.getName();
+	    
+	    //ROLE_admin
+	    String roleWithPrefix = authentication.getAuthorities().stream()
+	            .findFirst()//get first authority
+	            .map(GrantedAuthority::getAuthority)// will return string
+	            .orElse("");
 
-		// --- START OF CHANGE ---
-		// The previous code returned the 'username' (which is PRN for students)
-		// in the email field. This new code fetches the actual student email.
-		String email = username; // Default to username, which is correct for Admins
-		if (role.equals("Student")) {
-			Student student = studentRepository.findById(username)
-					.orElseThrow(() -> new ResourceNotFoundException("Student not found with prn: " + username));
-			email = student.getEmail();
-		}
-		// --- END OF CHANGE ---
+	    String email = username;
+	    // Check for "ROLE_Student"
+	    if (roleWithPrefix.equals("ROLE_Student")) {
+	        Student student = studentRepository.findById(username)
+	                .orElseThrow(() -> new ResourceNotFoundException("Student not found with prn: " + username));
+	        
+	        email = student.getEmail();
+	    }
+	    
+	    // Remove/Replace the "ROLE_" prefix for the response
+	    String finalRole = roleWithPrefix.replace("ROLE_", "");
 
-		return new AuthResponse(email, role, "Login successful", jwt);
+	    return new AuthResponse(email, finalRole, "Login successful", jwt);
 	}
 
-	// ... other methods ...
 	@Override
 	public List<AdminResponse> getAllAdmins() {
 		return adminRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
@@ -133,10 +145,13 @@ public class AuthServiceImpl implements IAuthService {
 
 	@Override
 	public void deleteAdmin(Integer adminId) {
+		
+		//check if admin exists or not
 		if (!adminRepository.existsById(adminId)) {
 			throw new ResourceNotFoundException("Admin not found with id: " + adminId);
 		}
-
+		
+		//check if it is associated with some feedback in table.
 		if (feedbackRepository.existsByResolvedByAdmin_AdminId(adminId)) {
 			throw new ConflictException("Cannot delete admin. They are linked to one or more feedback records.");
 		}
@@ -146,6 +161,7 @@ public class AuthServiceImpl implements IAuthService {
 
 	private AdminResponse convertToDto(Admin admin) {
 		AdminResponse dto = new AdminResponse();
+		
 		dto.setAdminId(admin.getAdminId());
 		dto.setFirstName(admin.getFirstName());
 		dto.setLastName(admin.getLastName());
@@ -154,10 +170,12 @@ public class AuthServiceImpl implements IAuthService {
 		dto.setDateOfBirth(admin.getDateOfBirth());
 		dto.setAddress(admin.getAddress());
 		dto.setRole(admin.getRole());
+		
 		if (admin.getDepartment() != null) {
 			dto.setDepartmentId(admin.getDepartment().getDepartmentId());
 			dto.setDepartmentName(admin.getDepartment().getDepartmentName());
 		}
+		
 		return dto;
 	}
 }

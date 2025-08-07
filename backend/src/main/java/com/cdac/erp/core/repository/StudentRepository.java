@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, String> {
-    // No custom methods are needed here for now.
-    // The JpaRepository already provides findById(String prn).
 	long countByDepartment_DepartmentId(Integer departmentId);
+
 	Page<Student> findByDepartment_DepartmentId(Integer departmentId, Pageable pageable);
 }

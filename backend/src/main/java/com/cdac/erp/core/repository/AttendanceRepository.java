@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
+	
     List<Attendance> findByTimetableEntry_TimetableEntryId(Integer timetableEntryId);
     Optional<Attendance> findByStudent_PrnAndTimetableEntry_TimetableEntryIdAndAttendanceDate(String prn, Integer timetableEntryId, LocalDate date);
     Page<Attendance> findByTimetableEntry_TimetableEntryId(Integer timetableEntryId, Pageable pageable);
@@ -24,7 +25,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     //date filter
     Page<Attendance> findByTimetableEntry_TimetableEntryIdAndAttendanceDate(Integer timetableEntryId, LocalDate date, Pageable pageable);
     
-    // --- Start of a change ---
     @Query("SELECT count(a) FROM Attendance a WHERE a.student.prn = :prn")
     long countByStudentPrn(@Param("prn") String prn);
 

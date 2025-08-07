@@ -3,6 +3,8 @@ package com.cdac.erp.feature.grades.service;
 import com.cdac.erp.feature.grades.dto.BulkScoreRequest;
 import com.cdac.erp.feature.grades.dto.MarksEntryResponseDto;
 import com.cdac.erp.feature.grades.dto.ScoreResponse;
+import com.cdac.erp.feature.grades.dto.ScoreUpdateRequest;
+
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,4 +35,13 @@ public interface IScoreService {
      * @return A paginated list of DTOs for the marks entry sheet.
      */
     Page<MarksEntryResponseDto> getMarksEntrySheetForExam(Integer examId, Pageable pageable);
+    
+    List<ScoreResponse> getAllScores();
+    
+    Page<ScoreResponse> getScoresForExam(Integer examId, Pageable pageable);
+    
+    ScoreResponse updateScore(Integer scoreId, ScoreUpdateRequest request);
+    void deleteScore(Integer scoreId);
+    
+    ScoreResponse getScoreForStudent(Integer examId, String studentPrn);
 }

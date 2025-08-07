@@ -1,21 +1,26 @@
 package com.cdac.erp.feature.student.service;
 
 import com.cdac.erp.common.exception.ResourceNotFoundException;
+import com.cdac.erp.core.model.Attendance;
+import com.cdac.erp.core.model.CourseModule;
 import com.cdac.erp.core.model.Department;
 import com.cdac.erp.core.model.FeedbackSession;
 import com.cdac.erp.core.model.Score;
 import com.cdac.erp.core.model.Student;
+import com.cdac.erp.core.repository.AttendanceRepository;
 import com.cdac.erp.core.repository.DepartmentRepository;
 import com.cdac.erp.core.repository.FeedbackSessionRepository;
+import com.cdac.erp.core.repository.CourseModuleRepository;
 import com.cdac.erp.core.repository.ScoreRepository;
 import com.cdac.erp.core.repository.StudentRepository;
 import com.cdac.erp.feature.grades.dto.ScoreResponse;
+//import com.cdac.erp.feature.student.dto.StudentAttendanceSummaryDto;
 import com.cdac.erp.feature.student.dto.StudentCreateRequest;
 import com.cdac.erp.feature.student.dto.StudentResponse;
 import com.cdac.erp.feature.student.dto.StudentUpdateRequest;
 import com.cdac.erp.feature.studentfeedback.dto.ActiveSessionResponse;
-
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +36,8 @@ public class StudentServiceImpl implements IStudentService {
     @Autowired private DepartmentRepository departmentRepository;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private ScoreRepository scoreRepository;
+    @Autowired private AttendanceRepository attendanceRepository;
+    @Autowired private CourseModuleRepository courseModuleRepository;
     @Autowired private FeedbackSessionRepository feedbackSessionRepository;
 
     @Override
@@ -115,6 +122,42 @@ public class StudentServiceImpl implements IStudentService {
                 ))
                 .collect(Collectors.toList());
     }
+    
+    @Override
+    public Page<StudentResponse> getStudentsByModule(String moduleId, Pageable pageable) {
+    	
+        CourseModule module = courseModuleRepository.findById(moduleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Module not found with id: " + moduleId));
+        
+        Integer departmentId = module.getDepartment().getDepartmentId();
+        
+        Page<Student> studentPage = studentRepository.findByDepartment_DepartmentId(departmentId, pageable);
+        return studentPage.map(this::convertToDto);
+    }
+    
+//    @Override
+//    public List<StudentAttendanceSummaryDto> getAttendanceSummary(String studentPrn) {
+//        List<Attendance> allAttendance = attendanceRepository.findByStudent_Prn(studentPrn);
+//
+//        Map<String, List<Attendance>> groupedByModule = allAttendance.stream()
+//            .filter(att -> att.getTimetableEntry() != null && att.getTimetableEntry().getModule() != null)
+//            .collect(Collectors.groupingBy(att -> att.getTimetableEntry().getModule().getModuleName()));
+//
+//        return groupedByModule.entrySet().stream().map(entry -> {
+//            String moduleName = entry.getKey();
+//            List<Attendance> moduleAttendance = entry.getValue();
+//            
+//            long classesHeld = moduleAttendance.size();
+//            long classesAttended = moduleAttendance.stream().filter(Attendance::getPresent).count();
+//            
+//            double percentage = 0;
+//            if (classesHeld > 0) {
+//                percentage = ((double) classesAttended / classesHeld) * 100;
+//            }
+//
+//            return new StudentAttendanceSummaryDto(moduleName, classesHeld, classesAttended, percentage);
+//        }).collect(Collectors.toList());
+//    }
 
     private StudentResponse convertToDto(Student student) {
         StudentResponse dto = new StudentResponse();
@@ -144,6 +187,7 @@ public class StudentServiceImpl implements IStudentService {
         if (score.getExam() != null) {
             dto.setExamId(score.getExam().getExamId());
             dto.setExamName(score.getExam().getExamName());
+            dto.setExamDate(score.getExam().getExamDate());
             if (score.getExam().getModule() != null) {
                 dto.setModuleName(score.getExam().getModule().getModuleName());
             }

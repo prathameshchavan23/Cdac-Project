@@ -28,7 +28,7 @@ public class Exam {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "module_id", nullable = false)
-    private Module module;
+    private CourseModule module;
 
     @Column(name = "exam_name", nullable = false, length = 100)
     private String examName;

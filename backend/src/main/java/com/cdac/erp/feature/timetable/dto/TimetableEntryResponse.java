@@ -18,5 +18,5 @@ public class TimetableEntryResponse {
     private LocalTime endTime;
     private String dayOfWeek;
     private String roomNumber;
-    private boolean isLab;
+    private Boolean isLab;
 }

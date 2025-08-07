@@ -27,6 +27,7 @@ public class StudentFeedbackServiceImpl implements IStudentFeedbackService {
 
 	@Override
 	public void submitFeedback(String studentPrn, FeedbackRequest request) {
+		
 		Student student = studentRepository.findById(studentPrn)
 				.orElseThrow(() -> new ResourceNotFoundException("Student not found"));
 
@@ -45,11 +46,11 @@ public class StudentFeedbackServiceImpl implements IStudentFeedbackService {
 		feedbackRepository.save(feedback);
 	}
 
-	@Override
-	public List<ActiveSessionResponse> getActiveFeedbackSessions() {
-		return feedbackSessionRepository.findByIsActive(true).stream()
-				.map(session -> new ActiveSessionResponse(session.getSessionId(), session.getModule().getModuleName(),
-						session.getInstructor().getFirstName() + " " + session.getInstructor().getLastName()))
-				.collect(Collectors.toList());
-	}
+//	@Override
+//	public List<ActiveSessionResponse> getActiveFeedbackSessions() {
+//		return feedbackSessionRepository.findByIsActive(true).stream()
+//				.map(session -> new ActiveSessionResponse(session.getSessionId(), session.getModule().getModuleName(),
+//						session.getInstructor().getFirstName() + " " + session.getInstructor().getLastName()))
+//				.collect(Collectors.toList());
+//	}
 }

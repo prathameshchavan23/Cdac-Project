@@ -1,6 +1,6 @@
 package com.cdac.erp.feature.module.service;
 
-import com.cdac.erp.core.model.Module;
+import com.cdac.erp.core.model.CourseModule;
 import com.cdac.erp.feature.module.dto.ModuleCreateRequest;
 import com.cdac.erp.feature.module.dto.ModuleResponse;
 import com.cdac.erp.feature.module.dto.ModuleUpdateRequest;

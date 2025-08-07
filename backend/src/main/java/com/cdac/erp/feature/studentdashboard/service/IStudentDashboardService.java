@@ -16,10 +16,10 @@ public interface IStudentDashboardService {
      */
     StudentDashboardStatsDto getStudentDashboardStats(String studentPrn);
 
-    /**
-     * Retrieves the class schedule for the current day for the logged-in student.
-     * @param studentPrn The PRN of the student.
-     * @return A list of DTOs representing today's classes, including their attendance status.
-     */
-    List<TodaysClassResponseDto> getTodaysClasses(String studentPrn);
+//    /**
+//     * Retrieves the class schedule for the current day for the logged-in student.
+//     * @param studentPrn The PRN of the student.
+//     * @return A list of DTOs representing today's classes, including their attendance status.
+//     */
+//    List<TodaysClassResponseDto> getTodaysClasses(String studentPrn);
 }

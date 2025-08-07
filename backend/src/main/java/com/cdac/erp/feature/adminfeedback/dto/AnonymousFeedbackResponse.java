@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnonymousFeedbackResponse {
+	
     private int serialNumber;
     private Integer feedbackId;
     private int teachingStyleRating;

@@ -37,7 +37,7 @@ public class Feedback {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "module_id")
-    private Module module;
+    private CourseModule module;
 
     @Column(name = "feedback_date", nullable = false)
     private LocalDate feedbackDate;

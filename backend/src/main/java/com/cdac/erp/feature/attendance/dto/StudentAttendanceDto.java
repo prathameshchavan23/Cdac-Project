@@ -13,5 +13,9 @@ public class StudentAttendanceDto {
     private String studentPrn;
 
     @NotNull(message = "Presence status is required")
-    private Boolean present; // Changed from boolean to Boolean
+    private Boolean isPresent; // Use Boolean object type for @NotNull
+    
+    public Boolean getIsPresent() {
+        return this.isPresent;
+    }
 }

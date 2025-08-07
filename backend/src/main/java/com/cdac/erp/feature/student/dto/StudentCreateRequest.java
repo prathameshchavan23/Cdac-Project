@@ -1,6 +1,7 @@
 package com.cdac.erp.feature.student.dto;
 
 import jakarta.validation.constraints.Email;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,6 +21,8 @@ public class StudentCreateRequest {
     
     private String lastName;
     private String phoneNumber;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
     private String address;
 

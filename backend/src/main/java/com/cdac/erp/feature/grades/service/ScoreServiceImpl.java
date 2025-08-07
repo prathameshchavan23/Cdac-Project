@@ -9,6 +9,7 @@ import com.cdac.erp.core.repository.ScoreRepository;
 import com.cdac.erp.core.repository.StudentRepository;
 import com.cdac.erp.feature.grades.dto.BulkScoreRequest;
 import com.cdac.erp.feature.grades.dto.ScoreResponse;
+import com.cdac.erp.feature.grades.dto.ScoreUpdateRequest;
 import com.cdac.erp.feature.grades.dto.StudentScoreDto;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +50,27 @@ public class ScoreServiceImpl implements IScoreService {
             scoreRepository.save(score);
         }
     }
+    
+    @Override
+    @Transactional
+    public ScoreResponse updateScore(Integer scoreId, ScoreUpdateRequest request) {
+        Score existingScore = scoreRepository.findById(scoreId)
+                .orElseThrow(() -> new ResourceNotFoundException("Score not found with id: " + scoreId));
+
+        existingScore.setLabExamMarks(request.getLabExamMarks());
+        existingScore.setInternalMarks(request.getInternalMarks());
+
+        Score updatedScore = scoreRepository.save(existingScore);
+        return convertToDto(updatedScore);
+    }
+
+    @Override
+    public void deleteScore(Integer scoreId) {
+        if (!scoreRepository.existsById(scoreId)) {
+            throw new ResourceNotFoundException("Score not found with id: " + scoreId);
+        }
+        scoreRepository.deleteById(scoreId);
+    }
 
     @Override
     public List<ScoreResponse> getScoresForExam(Integer examId) {
@@ -74,10 +96,12 @@ public class ScoreServiceImpl implements IScoreService {
         if (score.getExam() != null) {
             dto.setExamId(score.getExam().getExamId());
             dto.setExamName(score.getExam().getExamName());
+            // REMOVED: dto.setMaxMarks(score.getExam().getMaxMarks());
             if (score.getExam().getModule() != null) {
                 dto.setModuleName(score.getExam().getModule().getModuleName());
             }
         }
+        
         return dto;
     }
     
@@ -108,5 +132,38 @@ public class ScoreServiceImpl implements IScoreService {
                         null, null);
             }
         });
+    }
+    
+    @Override
+    public ScoreResponse getScoreForStudent(Integer examId, String studentPrn) {
+        Score score = scoreRepository.findByStudent_PrnAndExam_ExamId(studentPrn, examId)
+                .orElseThrow(() -> new ResourceNotFoundException("Score not found for student " + studentPrn + " in exam " + examId));
+        return convertToDto(score);
+    }
+    
+    @Override
+    public List<ScoreResponse> getAllScores() {
+        return scoreRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public Page<ScoreResponse> getScoresForExam(Integer examId, Pageable pageable) {
+        // --- START OF DEBUGGING ---
+        System.out.println("--- Searching for scores for examId: " + examId + " ---");
+        // --------------------------
+
+        if (!examRepository.existsById(examId)) {
+            throw new ResourceNotFoundException("Exam not found with id: " + examId);
+        }
+        
+        Page<Score> scorePage = scoreRepository.findByExam_ExamId(examId, pageable);
+        
+        // --- START OF DEBUGGING ---
+        System.out.println("--- Found " + scorePage.getTotalElements() + " score(s) for this exam. ---");
+        // --------------------------
+
+        return scorePage.map(this::convertToDto);
     }
 }

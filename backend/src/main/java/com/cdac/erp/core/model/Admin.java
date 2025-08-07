@@ -49,7 +49,8 @@ public class Admin {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Lob
+    
+    @Lob // Specifies this should be a Character Large Object (CLOB)
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
 

@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { loginStart, loginFailure, loginSuccess } from "../redux/authSlice.js";
@@ -13,7 +13,6 @@ const LoginPage = () => {
   const params = new URLSearchParams(location.search);
   const role = params.get("role") || "student"; 
 
-  // --- CHANGE: Use a generic 'username' state to handle both email and PRN ---
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,14 +21,11 @@ const LoginPage = () => {
     dispatch(loginStart());
 
     try {
-      // --- CHANGE: Call our real API service ---
       const userData = await loginUser(username, password);
 
-      // --- CHANGE: Check against roles from our backend ("Admin", "Super Admin", "Student") ---
       const userIsAdmin = userData.role.includes("Admin");
       const userIsStudent = userData.role === "Student";
 
-      // Validate that the user's actual role matches the login form's role
       if (role === 'staff' && !userIsAdmin) {
         dispatch(loginFailure(`Credentials are valid, but you are not Staff. Please use the Student portal.`));
         return;
@@ -41,7 +37,6 @@ const LoginPage = () => {
 
       dispatch(loginSuccess(userData));
 
-      // Navigate based on role after successful login
       if (userIsStudent) {
         navigate("/user/dashboard");
       } else if (userIsAdmin) {
@@ -71,7 +66,6 @@ const LoginPage = () => {
 
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
-            {/* --- CHANGE: Updated label and input to use 'username' --- */}
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
               {role === 'student' ? 'PRN' : 'Email Address'}
             </label>
@@ -112,7 +106,7 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-3 font-semibold text-indigo-600 bg-white border-2 border-indigo-600 rounded-md hover:bg-indigo-600 hover:text-white disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
