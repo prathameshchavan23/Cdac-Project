@@ -28,8 +28,11 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    
     const value = { user, login, logout };
 
+    // value attritube will help to provide data
+    // Now authcontext will be available to all it's children as we have wrapped it inside main.jsx with APP Component
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
