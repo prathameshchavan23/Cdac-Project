@@ -11,6 +11,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
+        // loginStart , loginSuccess, loginFailure, logout, loadUserFromStorage these all are actions
         loginStart: (state) => {
             state.loading = true;
             state.error = null;

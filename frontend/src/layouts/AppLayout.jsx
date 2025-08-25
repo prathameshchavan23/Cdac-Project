@@ -1,19 +1,18 @@
 // AppLayout.jsx
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/authSlice"; // Make sure this path is correct
+import { logout } from "../redux/authSlice";
 
-// Import the reusable, attractive Sidebar component
-import Sidebar from "../components/Sidebar"; // Adjust path if necessary
+import Sidebar from "../components/Sidebar";
 
 const AppLayout = ({ role }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  // State to manage the profile dropdown menu
+  //local UI state for the profile dropdown.
   const [isProfileOpen, setProfileOpen] = useState(false);
 
   const handleLogout = () => {
@@ -27,7 +26,7 @@ const AppLayout = ({ role }) => {
 
   return (
     <div className="flex h-screen bg-slate-100">
-      {/* 1. Reusable Sidebar Component */}
+      {/* left is Sidebar (given sidebarRole), right is the main area. */}
       <Sidebar role={sidebarRole} />
 
       {/* Main content area */}
@@ -35,7 +34,6 @@ const AppLayout = ({ role }) => {
         {/* 2. Enhanced Header with Profile Dropdown */}
         <header className="bg-white shadow-md z-10">
           <div className="flex items-center justify-between h-16 px-6">
-            {/* Can be used for breadcrumbs or page titles in the future */}
             <div className="text-lg font-semibold text-slate-700">
               {role === "staff" ? "Staff Portal" : "Student Portal"}
             </div>
