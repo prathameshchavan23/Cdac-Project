@@ -50,7 +50,7 @@ The backend is built with a secure, stateless RESTful API using Spring Boot, whi
 
 - Frontend: HTML5, CSS3, JavaScript, React
 
-## 🎨 Design
+## Design
 
 The UI/UX for this project was designed in Figma. You can view the complete design file, including components, wireframes, and prototypes, here:
 
@@ -65,7 +65,7 @@ The UI/UX for this project was designed in Figma. You can view the complete desi
 </details>
 
 
-# 🚀 Getting Started
+# Getting Started
 
 Follow these instructions to get a local copy up and running for development and testing purposes.
 
@@ -141,7 +141,7 @@ npm run dev
 ```
 The React application will start on http://localhost:5173 (or another port specified by Vite).
 
-## 📋 API Endpoints
+## API Endpoints
 
 A complete list of all available API endpoints is provided below. All administrative endpoints under `/api/admin/**` and student endpoints under `/api/student/**` require a valid JWT Bearer Token for authorization.
 
